@@ -1,8 +1,8 @@
 import discord
 import random
-adminName = "y0sh1#1990"
+from discord import utils
+adminNames = ["y0sh1#1990", "Sh4ky#3017"]
 santaRoleName = "Wichtel"
-guildId = 1 # 1 = testbench | 0 = conies homies
 
 class Comie(discord.Client):
     async def on_ready(self):
@@ -14,10 +14,14 @@ class Comie(discord.Client):
             return
 
         ##### SECRET SANTA
-        if message.content.startswith("!wichteln") and str(message.author) == adminName:
+        if message.content.startswith("!wichteln") and str(message.author) in adminNames:
             debug = message.content.endswith("debug")
-            users = self.guilds[guildId].members
-            role = discord.utils.get(self.guilds[guildId].roles, name=santaRoleName)
+            try:
+                users = message.guild.members
+            except:
+                await message.author.send("Wichteln kann nicht aus einem privaten Chat heraus gestartet werden!")
+                return
+            role = utils.get(message.guild.roles, name=santaRoleName)
             santas = []
             for u in users:
                 if role in u.roles:
