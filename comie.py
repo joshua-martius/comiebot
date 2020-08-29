@@ -4,7 +4,11 @@ from discord import utils
 adminNames = ["y0sh1#1990", "Sh4ky#3017"]
 santaRoleName = "Wichtel"
 
+def mentionUser(user):
+    return "<@" + str(user.id) + ">"
+
 class Comie(discord.Client):
+
     async def on_ready(self):
         print("Bot is up and running.")
         return
@@ -57,8 +61,6 @@ class Comie(discord.Client):
             return
         #####
 
-
-        if message.content.startswith("!help"):
-            id = message.author.id
-            await message.channel.send("Hi <@" + str(id) + ">!\nLeider kann ich noch nichts :(")
+        elif message.content.startswith("!help"):
+            await message.channel.send("Hi " + mentionUser(message.author) + "!\nLeider kann ich noch nichts :(")
             return
