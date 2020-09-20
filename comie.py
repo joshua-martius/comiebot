@@ -27,6 +27,7 @@ class Comie(discord.Client):
 
         ##### IMGUR
         elif message.content.startswith("!img"):
+            await message.channel.send("Hier kommt ein zufälliges Bild für dich %s ~(^__^)~" % (mentionUser(message.author)))
             await imgur.exec(self, message)
             return
 
