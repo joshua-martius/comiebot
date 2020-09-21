@@ -33,7 +33,7 @@ class Comie(discord.Client):
 
         ##### SELF HELP
         elif message.content.startswith("!help"):
-            await message.channel.send("Hi " + mentionUser(message.author) + "!\nLeider kann ich noch nichts :(")
+            await message.channel.send("Hi " + mentionUser(message.author) + "!\nIch kann folgende Befehle bearbeiten:\n!help - Zeigt diese Hilfe an\n!img - Schickt ein zufälliges Bild in den aktuellen Channel\n!wichteln - Startet eine Wichtelpaar Auslosung")
             return
 
         ##### UNKNOWN COMMAND

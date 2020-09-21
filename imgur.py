@@ -9,6 +9,7 @@ class imgur():
     async def exec(self, message):
         baseString = "https://i.imgur.com"
         chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+        len = random.randint(5,6)
         id = ''.join(random.choice(chars) for i in range(5))
         url = "%s/%s.png" % (baseString, id)
         
