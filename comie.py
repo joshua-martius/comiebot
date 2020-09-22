@@ -71,7 +71,7 @@ class Comie(discord.Client):
 
         ##### SELF HELP
         elif message.content.startswith("!help"):
-            await message.channel.send("Hi " + mentionUser(message.author) + "!\nIch kann folgende Befehle bearbeiten:\n!help - Zeigt diese Hilfe an\n!img - Schickt ein zufälliges Bild in den aktuellen Channel (Upvote: 👍 | Downvote: 👀)\n!wichteln - Startet eine Wichtelpaar Auslosung")
+            await message.channel.send("Hi " + mentionUser(message.author) + "!\nIch kann folgende Befehle bearbeiten:\n!help - Zeigt diese Hilfe an\n!img - Schickt ein zufälliges Bild in den aktuellen Channel (Upvote: 👍 | Downvote: 👀)\n!wichteln - Startet eine Wichtelpaar Auslosung\n!joke - Erzählt einen Witz")
             return
 
         ##### UNKNOWN COMMAND
