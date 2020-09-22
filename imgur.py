@@ -9,6 +9,9 @@ imageIDs = []
 authorIDs = []
 votes = []
 
+def mentionUser(user):
+    return "<@" + str(user.id) + ">"
+
 class imgur():
 
     async def postImage(self, message, author):
@@ -40,5 +43,12 @@ class imgur():
         imgid = reaction.message.id
         index = imageIDs.index(imgid)
 
-        votes[index] = votes[index] + 1
+        if reaction.emoji == "👀":
+            votes[index] = votes[index] - 1
+            if votes[index] <= -3:
+                author = await self.fetch_user(authorIDs[index])
+                await reaction.message.delete() # delete image with a score of -3 or lower
+                await reaction.message.channel.send("Ich habe ein Bild von %s verschwinden lassen! 🤭" % (mentionUser(author)))
+        else:
+            votes[index] = votes[index] + 1
         return

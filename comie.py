@@ -16,7 +16,7 @@ class Comie(discord.Client):
     async def on_reaction_add(self, reaction, user):
         if str(reaction.message.author) != "Comie#1396":
             return
-        if reaction.emoji != "👍":
+        if reaction.emoji != "👍" and reaction.emoji != "👀":
             return
         
         await imgur.reaction(self, reaction, user)
@@ -53,7 +53,7 @@ class Comie(discord.Client):
         
         ##### SELF HELP
         elif message.content.startswith("!help"):
-            await message.channel.send("Hi " + mentionUser(message.author) + "!\nIch kann folgende Befehle bearbeiten:\n!help - Zeigt diese Hilfe an\n!img - Schickt ein zufälliges Bild in den aktuellen Channel\n!wichteln - Startet eine Wichtelpaar Auslosung")
+            await message.channel.send("Hi " + mentionUser(message.author) + "!\nIch kann folgende Befehle bearbeiten:\n!help - Zeigt diese Hilfe an\n!img - Schickt ein zufälliges Bild in den aktuellen Channel (Upvote: 👍 | Downvote: 👀)\n!wichteln - Startet eine Wichtelpaar Auslosung")
             return
 
         ##### UNKNOWN COMMAND
