@@ -16,7 +16,6 @@ class joker():
                 return
             else:
                 jokeIDs.append(data["id"])
-                print(jokeIDs)
                 await message.channel.send(data["setup"])
                 await sleep(3)
                 await message.channel.send(data["punchline"])
