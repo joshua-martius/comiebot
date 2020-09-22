@@ -3,6 +3,7 @@ import random
 from discord import utils
 from secretsanta import secretsanta
 from imgur import imgur
+from joker import joker
 
 adminNames = ["y0sh1#1990", "Sh4ky#3017"]
 
@@ -63,6 +64,11 @@ class Comie(discord.Client):
             await winmsg.pin()
             return
         
+        #### JOKE
+        elif message.content.startswith("!joke"):
+            await joker.exec(self, message)
+            return
+
         ##### SELF HELP
         elif message.content.startswith("!help"):
             await message.channel.send("Hi " + mentionUser(message.author) + "!\nIch kann folgende Befehle bearbeiten:\n!help - Zeigt diese Hilfe an\n!img - Schickt ein zufälliges Bild in den aktuellen Channel (Upvote: 👍 | Downvote: 👀)\n!wichteln - Startet eine Wichtelpaar Auslosung")
