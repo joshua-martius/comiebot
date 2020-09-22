@@ -22,6 +22,7 @@ class Comie(discord.Client):
         await imgur.reaction(self, reaction, user)
         return
 
+
     ### READY MESSAGE
     async def on_ready(self):
         print("Bot is up and running.")
@@ -30,6 +31,8 @@ class Comie(discord.Client):
     async def on_message(self, message):
         if message.author == self.user: 
             return
+
+        message.content = str(message.content).lower()
 
         ##### SECRET SANTA
         if message.content.startswith("!wichteln") and str(message.author) in adminNames:
