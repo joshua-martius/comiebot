@@ -39,16 +39,29 @@ class imgur():
         winnerIndex = votes.index(max(votes))
         return [imageIDs[winnerIndex], votes[winnerIndex], authorIDs[winnerIndex]]
 
-    async def reaction(self, reaction, user):
+
+    ## ToDo: clean up this mess
+    async def reaction(self, reaction, user, removal):
         imgid = reaction.message.id
         index = imageIDs.index(imgid)
 
         if reaction.emoji == "👀":
+            if removal:
+                votes[index] = votes[index] + 1
+                return
             votes[index] = votes[index] - 1
             if votes[index] <= -3:
                 author = await self.fetch_user(authorIDs[index])
                 await reaction.message.delete() # delete image with a score of -3 or lower
                 await reaction.message.channel.send("Ich habe ein Bild von %s verschwinden lassen! 🤭" % (mentionUser(author)))
         else:
+            if removal:
+                votes[index] = votes[index] - 1
+                if votes[index] <= -3:
+                    author = await self.fetch_user(authorIDs[index])
+                    await reaction.message.delete() # delete image with a score of -3 or lower
+                    await reaction.message.channel.send("Ich habe ein Bild von %s verschwinden lassen! 🤭" % (mentionUser(author)))
+                return
+            
             votes[index] = votes[index] + 1
         return

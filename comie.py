@@ -19,7 +19,16 @@ class Comie(discord.Client):
         if reaction.emoji != "👍" and reaction.emoji != "👀":
             return
         
-        await imgur.reaction(self, reaction, user)
+        await imgur.reaction(self, reaction, user, False)
+        return
+
+    async def on_reaction_remove(self, reaction, user):
+        if str(reaction.message.author) != "Comie#1396":
+            return
+        if reaction.emoji != "👍" and reaction.emoji != "👀":
+            return
+        
+        await imgur.reaction(self, reaction, user, True)
         return
 
 
