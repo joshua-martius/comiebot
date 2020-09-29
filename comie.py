@@ -41,6 +41,9 @@ class Comie(discord.Client):
     async def on_message(self, message):
         if message.author == self.user: 
             return
+        
+        if not message.content.startswith("!"):
+            return
 
         message.content = str(message.content).lower()
 
@@ -55,7 +58,7 @@ class Comie(discord.Client):
             await imgur.postImage(self, message, message.author)
             return
 
-        elif message.content.startswith("!results"):
+        elif message.content.startswith("!results") and str(message.author) in adminNames:
             results = await imgur.postResults(self, message.channel)
             winmsg = await message.channel.fetch_message(results[0])
             winner = await self.fetch_user(results[2])
@@ -75,6 +78,6 @@ class Comie(discord.Client):
             return
 
         ##### UNKNOWN COMMAND
-        elif message.content.startswith("!") and len(message.content) != 0:
+        elif len(message.content) != 0:
             await message.channel.send("Den Befehl kenne ich nicht :/")
             return
