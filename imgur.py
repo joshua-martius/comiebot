@@ -14,14 +14,36 @@ images = []
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
 
+dbcred = []
+try:
+    with open("./dbcred") as file:
+        for i in range(4):
+            line = file.readline()
+            dbcred.append(line.strip('\n'))
+except:
+    print("Couldnt find database credentials in dbcred file. Exiting.")
+    exit()
+
 mydb = mysql.connector.connect(
-  host="dev.serwm.com",
-  user="root",
-  password="0c12d1db0cd4edabc8782532d507438d",
-  database="comiebot"
+  host=dbcred[0],
+  user=dbcred[1],
+  password=dbcred[2],
+  database=dbcred[3]
 )
 
+
 sql = mydb.cursor()
+
+def executeSql(cmd):
+    if cmd.startswith("SELECT"):
+        sql.execute(cmd)
+        result = sql.fetchall()
+        return result
+    else:
+        # insert, update or delete
+        sql.execute(cmd)
+        mydb.commit()
+        return
 
 class imgur():
 
@@ -53,14 +75,12 @@ class imgur():
 
         # add image to voting table
         cmd = "INSERT INTO tblVoting(vMessage, vAuthor) VALUES ('%s','%s')" % (message.id, author.id)
-        sql.execute(cmd)
-        mydb.commit()
+        executeSql(cmd)
         return
 
     async def postResults(self, channel):
         cmd = "SELECT vMessage,vVotes,vAuthor FROM tblVoting WHERE vVotes = MAX(vVotes) ORDER BY vCreated DESC LIMIT 1"
-        sql.execute(cmd)
-        result = sql.fetchone()
+        result = executeSql(cmd)
         return [result[0],result[1], result[2]]
 
     ## ToDo: clean up this mess
@@ -70,15 +90,12 @@ class imgur():
         if reaction.emoji == "👀":
             if removal:
                 cmd = "UPDATE tblVoting SET vVotes = vVotes + 1 WHERE vMessage = '%s'" % (imgid)
-                sql.execute(cmd)
-                mydb.commit()
+                executeSql(cmd)
                 return
             cmd = "UPDATE tblVoting SET vVotes = vVotes - 1 WHERE vMessage = '%s'" % (imgid)
-            sql.execute(cmd)
-            mydb.commit()
+            executeSql(cmd)
             cmd = "SELECT vVotes,vAuthor FROM tblVoting WHERE vMessage = '%s'" % (imgid)
-            sql.execute(cmd)
-            result = sql.fetchone()
+            result = executeSql(cmd)
             if int(result[0]) <= -3:
                 author = await self.fetch_user(result[1])
                 await reaction.message.delete() # delete image with a score of -3 or lower
@@ -86,11 +103,9 @@ class imgur():
         else:
             if removal:
                 cmd = "UPDATE tblVoting SET vVotes = vVotes - 1 WHERE vMessage = '%s'" % (imgid)
-                sql.execute(cmd)
-                mydb.commit()
+                executeSql(cmd)
                 cmd = "SELECT vVotes,vAuthor FROM tblVoting WHERE vMessage = '%s'" % (reaction.message.id)
-                sql.execute(cmd)
-                result = sql.fetchone()
+                result = executeSql(cmd)
                 if int(result[0]) <= -3:
                     author = await self.fetch_user(result[1])
                     await reaction.message.delete() # delete image with a score of -3 or lower
@@ -98,6 +113,5 @@ class imgur():
                 return
             
             cmd = "UPDATE tblVoting SET vVotes = vVotes + 1 WHERE vMessage = '%s'" % (imgid)
-            sql.execute(cmd)
-            mydb.commit()
+            executeSql(cmd)
         return
