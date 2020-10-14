@@ -32,6 +32,7 @@ mydb = mysql.connector.connect(
 sql = mydb.cursor()
 
 def executeSql(cmd):
+    print("Trying to execute: " + cmd)
     if cmd.startswith("SELECT"):
         sql.execute(cmd)
         result = sql.fetchall()
@@ -76,9 +77,9 @@ class imgur():
         return
 
     async def postResults(self, channel):
-        cmd = "SELECT vMessage,vVotes,vAuthor FROM tblVoting WHERE vVotes = MAX(vVotes) ORDER BY vCreated DESC LIMIT 1"
+        cmd = "SELECT vMessage,vVotes,vAuthor FROM tblVoting WHERE vVotes = (SELECT MAX(vVotes) FROM tblVoting) LIMIT 1"
         result = executeSql(cmd)
-        return [result[0],result[1], result[2]]
+        return [result[0][0],result[0][1], result[0][2]]
 
     ## ToDo: clean up this mess
     async def reaction(self, reaction, user, removal):
