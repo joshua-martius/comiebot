@@ -6,9 +6,6 @@ import urllib.request
 from PIL import Image
 import mysql.connector
 
-imageIDs = []
-authorIDs = []
-votes = []
 images = []
 
 def mentionUser(user):
