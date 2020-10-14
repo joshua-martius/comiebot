@@ -16,12 +16,12 @@ def mentionUser(user):
 
 dbcred = []
 try:
-    with open("./dbcred") as file:
+    with open("./.dbcred") as file:
         for i in range(4):
             line = file.readline()
             dbcred.append(line.strip('\n'))
 except:
-    print("Couldnt find database credentials in dbcred file. Exiting.")
+    print("Couldnt find database credentials in .dbcred file. Exiting.")
     exit()
 
 mydb = mysql.connector.connect(
