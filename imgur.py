@@ -4,6 +4,7 @@ import random
 import string
 import urllib.request
 from PIL import Image
+import mysql.connector
 
 imageIDs = []
 authorIDs = []
@@ -12,6 +13,15 @@ images = []
 
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
+
+mydb = mysql.connector.connect(
+  host="dev.serwm.com",
+  user="root",
+  password="0c12d1db0cd4edabc8782532d507438d",
+  database="comiebot"
+)
+
+sql = mydb.cursor()
 
 class imgur():
 
@@ -41,38 +51,53 @@ class imgur():
 
         message = await message.channel.send(file=discord.File('img.png'))
 
-        imageIDs.append(message.id)
-        authorIDs.append(author.id)
-        votes.append(0)
+        # add image to voting table
+        cmd = "INSERT INTO tblVoting(vMessage, vAuthor) VALUES ('%s','%s')" % (message.id, author.id)
+        sql.execute(cmd)
+        mydb.commit()
         return
 
     async def postResults(self, channel):
-        winnerIndex = votes.index(max(votes))
-        return [imageIDs[winnerIndex], votes[winnerIndex], authorIDs[winnerIndex]]
-
+        cmd = "SELECT vMessage,vVotes,vAuthor FROM tblVoting WHERE vVotes = MAX(vVotes) ORDER BY vCreated DESC LIMIT 1"
+        sql.execute(cmd)
+        result = sql.fetchone()
+        return [result[0],result[1], result[2]]
 
     ## ToDo: clean up this mess
     async def reaction(self, reaction, user, removal):
         imgid = reaction.message.id
-        index = imageIDs.index(imgid)
 
         if reaction.emoji == "👀":
             if removal:
-                votes[index] = votes[index] + 1
+                cmd = "UPDATE tblVoting SET vVotes = vVotes + 1 WHERE vMessage = '%s'" % (imgid)
+                sql.execute(cmd)
+                mydb.commit()
                 return
-            votes[index] = votes[index] - 1
-            if votes[index] <= -3:
-                author = await self.fetch_user(authorIDs[index])
+            cmd = "UPDATE tblVoting SET vVotes = vVotes - 1 WHERE vMessage = '%s'" % (imgid)
+            sql.execute(cmd)
+            mydb.commit()
+            cmd = "SELECT vVotes,vAuthor FROM tblVoting WHERE vMessage = '%s'" % (imgid)
+            sql.execute(cmd)
+            result = sql.fetchone()
+            if int(result[0]) <= -3:
+                author = await self.fetch_user(result[1])
                 await reaction.message.delete() # delete image with a score of -3 or lower
                 await reaction.message.channel.send("Ich habe ein Bild von %s verschwinden lassen! 🤭" % (mentionUser(author)))
         else:
             if removal:
-                votes[index] = votes[index] - 1
-                if votes[index] <= -3:
-                    author = await self.fetch_user(authorIDs[index])
+                cmd = "UPDATE tblVoting SET vVotes = vVotes - 1 WHERE vMessage = '%s'" % (imgid)
+                sql.execute(cmd)
+                mydb.commit()
+                cmd = "SELECT vVotes,vAuthor FROM tblVoting WHERE vMessage = '%s'" % (reaction.message.id)
+                sql.execute(cmd)
+                result = sql.fetchone()
+                if int(result[0]) <= -3:
+                    author = await self.fetch_user(result[1])
                     await reaction.message.delete() # delete image with a score of -3 or lower
                     await reaction.message.channel.send("Ich habe ein Bild von %s verschwinden lassen! 🤭" % (mentionUser(author)))
                 return
             
-            votes[index] = votes[index] + 1
+            cmd = "UPDATE tblVoting SET vVotes = vVotes + 1 WHERE vMessage = '%s'" % (imgid)
+            sql.execute(cmd)
+            mydb.commit()
         return
