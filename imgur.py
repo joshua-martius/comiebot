@@ -4,14 +4,44 @@ import random
 import string
 import urllib.request
 from PIL import Image
+import mysql.connector
 
-imageIDs = []
-authorIDs = []
-votes = []
 images = []
 
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
+
+dbcred = []
+try:
+    with open("./.dbcred") as file:
+        for i in range(4):
+            line = file.readline()
+            dbcred.append(line.strip('\n'))
+except:
+    print("Couldnt find database credentials in .dbcred file. Exiting.")
+    exit()
+
+mydb = mysql.connector.connect(
+  host=dbcred[0],
+  user=dbcred[1],
+  password=dbcred[2],
+  database=dbcred[3]
+)
+
+
+sql = mydb.cursor()
+
+def executeSql(cmd):
+    print("Trying to execute: " + cmd)
+    if cmd.startswith("SELECT"):
+        sql.execute(cmd)
+        result = sql.fetchall()
+        return result
+    else:
+        # insert, update or delete
+        sql.execute(cmd)
+        mydb.commit()
+        return
 
 class imgur():
 
@@ -41,38 +71,45 @@ class imgur():
 
         message = await message.channel.send(file=discord.File('img.png'))
 
-        imageIDs.append(message.id)
-        authorIDs.append(author.id)
-        votes.append(0)
+        # add image to voting table
+        cmd = "INSERT INTO tblVoting(vMessage, vAuthor) VALUES ('%s','%s')" % (message.id, author.id)
+        executeSql(cmd)
         return
 
     async def postResults(self, channel):
-        winnerIndex = votes.index(max(votes))
-        return [imageIDs[winnerIndex], votes[winnerIndex], authorIDs[winnerIndex]]
-
+        cmd = "SELECT vMessage,vVotes,vAuthor FROM tblVoting WHERE vVotes = (SELECT MAX(vVotes) FROM tblVoting) LIMIT 1"
+        result = executeSql(cmd)
+        return [result[0][0],result[0][1], result[0][2]]
 
     ## ToDo: clean up this mess
     async def reaction(self, reaction, user, removal):
         imgid = reaction.message.id
-        index = imageIDs.index(imgid)
 
         if reaction.emoji == "👀":
             if removal:
-                votes[index] = votes[index] + 1
+                cmd = "UPDATE tblVoting SET vVotes = vVotes + 1 WHERE vMessage = '%s'" % (imgid)
+                executeSql(cmd)
                 return
-            votes[index] = votes[index] - 1
-            if votes[index] <= -3:
-                author = await self.fetch_user(authorIDs[index])
+            cmd = "UPDATE tblVoting SET vVotes = vVotes - 1 WHERE vMessage = '%s'" % (imgid)
+            executeSql(cmd)
+            cmd = "SELECT vVotes,vAuthor FROM tblVoting WHERE vMessage = '%s'" % (imgid)
+            result = executeSql(cmd)
+            if int(result[0]) <= -3:
+                author = await self.fetch_user(result[1])
                 await reaction.message.delete() # delete image with a score of -3 or lower
                 await reaction.message.channel.send("Ich habe ein Bild von %s verschwinden lassen! 🤭" % (mentionUser(author)))
         else:
             if removal:
-                votes[index] = votes[index] - 1
-                if votes[index] <= -3:
-                    author = await self.fetch_user(authorIDs[index])
+                cmd = "UPDATE tblVoting SET vVotes = vVotes - 1 WHERE vMessage = '%s'" % (imgid)
+                executeSql(cmd)
+                cmd = "SELECT vVotes,vAuthor FROM tblVoting WHERE vMessage = '%s'" % (reaction.message.id)
+                result = executeSql(cmd)
+                if int(result[0]) <= -3:
+                    author = await self.fetch_user(result[1])
                     await reaction.message.delete() # delete image with a score of -3 or lower
                     await reaction.message.channel.send("Ich habe ein Bild von %s verschwinden lassen! 🤭" % (mentionUser(author)))
                 return
             
-            votes[index] = votes[index] + 1
+            cmd = "UPDATE tblVoting SET vVotes = vVotes + 1 WHERE vMessage = '%s'" % (imgid)
+            executeSql(cmd)
         return
