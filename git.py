@@ -12,8 +12,13 @@ class git():
                 if label["name"] == "bug":
                     bugs.append(key["title"])
 
-        output = "Ich habe aktuell folgende Fehler:\n"
-        for bug in bugs:
-            output = output + "--> " + bug + "\n"
+        output = ""
+        if len(bugs) == 0:
+            # no bugs on github
+            output = "Ich habe aktuell keine bekannten Fehler! 😱🥺✨"
+        else:
+            output = "Ich habe aktuell folgende Fehler 🤔\n"
+            for bug in bugs:
+                output = output + "--> " + bug + "\n"
 
         return output
