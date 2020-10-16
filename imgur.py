@@ -94,8 +94,8 @@ class imgur():
             executeSql(cmd)
             cmd = "SELECT vVotes,vAuthor FROM tblVoting WHERE vMessage = '%s'" % (imgid)
             result = executeSql(cmd)
-            if int(result[0]) <= -3:
-                author = await self.fetch_user(result[1])
+            if int(result[0][0]) <= -1:
+                author = await self.fetch_user(result[0][1])
                 await reaction.message.delete() # delete image with a score of -3 or lower
                 await reaction.message.channel.send("Ich habe ein Bild von %s verschwinden lassen! 🤭" % (mentionUser(author)))
         else:
@@ -104,8 +104,8 @@ class imgur():
                 executeSql(cmd)
                 cmd = "SELECT vVotes,vAuthor FROM tblVoting WHERE vMessage = '%s'" % (reaction.message.id)
                 result = executeSql(cmd)
-                if int(result[0]) <= -3:
-                    author = await self.fetch_user(result[1])
+                if int(result[0][0]) <= -1:
+                    author = await self.fetch_user(result[0][1])
                     await reaction.message.delete() # delete image with a score of -3 or lower
                     await reaction.message.channel.send("Ich habe ein Bild von %s verschwinden lassen! 🤭" % (mentionUser(author)))
                 return
