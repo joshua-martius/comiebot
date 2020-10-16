@@ -2,6 +2,9 @@
 from discord import utils
 import random
 
+def mentionUser(user):
+    return "<@" + str(user.id) + ">"
+
 class secretsanta():
     async def exec(self, message):
         debug = message.content.endswith("debug")
@@ -31,17 +34,17 @@ class secretsanta():
         if not debug:
             for i in range(len(santas) - 1):
                 santaFrom = santas[i]
-                santaTo = str(santas[i + 1])
+                santaTo = mentionUser(santas[i + 1])
                 await santaFrom.send("Dein Wichtelpartner ist: " + santaTo)
 
             # Special message for the last entry
             await santas[-1].send("Dein Wichtelpartner ist: " + str(santas[0]))
         else:
             for i in range(len(santas) - 1):
-                santaFrom = str(santas[i])
-                santaTo = str(santas[i + 1])
-                await message.channel.send("%s hat %s bekommen." % (santaFrom, santaTo))
-            await message.channel.send("%s hat %s bekommen." % (str(santas[-1]), str(santas[0])))
+                santaFrom = santas[i]
+                santaTo = santas[i + 1]
+                await message.channel.send("%s hat %s bekommen." % (mentionUser(santaFrom), mentionUser(santaTo)))
+            await message.channel.send("%s hat %s bekommen." % (mentionUser(santas[-1]), mentionUser(santas[0])))
 
         await message.channel.send("Ich habe die Teilnehmerliste %d mal durchgewürfelt :)" % (shuffles))
         await message.channel.send("Partnervergabe abgeschlossen! Viel Spaß %ss!" % (self.santaRoleName))
