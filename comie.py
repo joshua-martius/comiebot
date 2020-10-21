@@ -20,15 +20,6 @@ except:
     print("Couldnt find database credentials in .dbcred file. Exiting.")
     exit()
 
-#mydb = mysql.connector.connect(
-#  host=dbcred[0],
-#  user=dbcred[1],
-#  password=dbcred[2],
-#  database=dbcred[3]
-#)
-
-#sql = mydb.cursor()
-
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
 
@@ -78,16 +69,6 @@ class Comie(discord.Client):
             await message.channel.send("Hier kommt ein zufälliges Bild für dich %s ~(^__^)~" % (mentionUser(message.author)))
             await imgur.postImage(self, message, message.author)
 
-            ### hue color flip
-            #sql.execute("INSERT INTO tblHue(cCommand,cAuthor,cDone) VALUES ('Wohnzimmerlampe,on,True','%s',0)" % (str(message.author)))
-            #time.sleep(0.5)
-            #sql.execute("INSERT INTO tblHue(cCommand,cAuthor,cDone) VALUES ('Wohnzimmerlampe,on,False','%s',0)" % (str(message.author)))
-            #time.sleep(0.5)
-            #sql.execute("INSERT INTO tblHue(cCommand,cAuthor,cDone) VALUES ('Wohnzimmerlampe,on,True','%s',0)" % (str(message.author)))
-            #time.sleep(0.5)
-            #sql.execute("INSERT INTO tblHue(cCommand,cAuthor,cDone) VALUES ('Wohnzimmerlampe,on,False','%s',0)" % (str(message.author)))
-            #mydb.commit()
-
             return
 
         elif message.content.startswith("!results") and str(message.author) in adminNames:
@@ -108,26 +89,6 @@ class Comie(discord.Client):
         elif message.content.startswith("!bugs"):
             await message.channel.send(git.exec(self))
             return
-
-        #elif message.content.startswith("!light"):
-        #    params = message.content.split(" ")[1:]
-        #    cmd = params[0].lower()
-        #    if cmd == "on":
-        #        sql.execute("INSERT INTO tblHue(cCommand,cAuthor,cDone) VALUES ('Wohnzimmerlampe,on,True','%s',0)" % (str(message.author)))
-        #        await message.channel.send("Ich mach dann mal das Licht an!")
-        #    elif cmd == "off":
-        #        sql.execute("INSERT INTO tblHue(cCommand,cAuthor,cDone) VALUES ('Wohnzimmerlampe,on,False','%s',0)" % (str(message.author)))
-        #        await message.channel.send("Ich mach dann mal das Licht aus!")
-        #    elif cmd == "color":
-        #        if not params[1].isnumeric():
-        #            return
-        #        val = int(params[1])
-        #        sql.execute("INSERT INTO tblHue(cCommand,cAuthor,cDone) VALUES ('Wohnzimmerlampe,hue,%d','%s',0)" % (val,str(message.author)))
-        #        await message.channel.send("Ich mach dann mal das Licht farbig!")
-        #    else:
-        #        return
-        #    mydb.commit()
-        #    return
 
         ##### SELF HELP
         elif message.content.startswith("!help"):
