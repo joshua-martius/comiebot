@@ -36,24 +36,23 @@ class Comie(discord.Client):
     santaRoleName = "Wichtel"
 
     ### REACIONS
-    async def on_reaction_add(self, reaction, user):
-        if str(reaction.message.author) != "Comie#1396":
-            return
-        if reaction.emoji != "👍" and reaction.emoji != "👀":
+    async def on_raw_reaction_add(self, payload):
+        if payload.emoji.name != "👍" and payload.emoji.name != "👀":
             return
         
-        await imgur.reaction(self, reaction, user, False)
+        channel = await self.fetch_channel(payload.channel_id)
+
+        await imgur.reaction(self, payload, channel, False)
         return
 
-    async def on_reaction_remove(self, reaction, user):
-        if str(reaction.message.author) != "Comie#1396":
-            return
-        if reaction.emoji != "👍" and reaction.emoji != "👀":
+    async def on_raw_reaction_remove(self, payload):
+        if payload.emoji.name != "👍" and payload.emoji.name != "👀":
             return
         
-        await imgur.reaction(self, reaction, user, True)
-        return
+        channel = await self.fetch_channel(payload.channel_id)
 
+        await imgur.reaction(self, payload, channel, True)
+        return
 
     ### READY MESSAGE
     async def on_ready(self):

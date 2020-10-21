@@ -85,10 +85,10 @@ class imgur():
         return [result[0][0],result[0][1], result[0][2]]
 
     ## ToDo: clean up this mess
-    async def reaction(self, reaction, user, removal):
-        imgid = reaction.message.id
+    async def reaction(self, payload, channel, removal):
+        imgid = payload.message_id
 
-        if reaction.emoji == "👀":
+        if payload.emoji.name == "👀":
             if removal:
                 cmd = "UPDATE tblVoting SET vVotes = vVotes + 1 WHERE vMessage = '%s'" % (imgid)
                 executeSql(cmd)
@@ -99,18 +99,20 @@ class imgur():
             result = executeSql(cmd)
             if int(result[0][0]) <= -3:
                 author = await self.fetch_user(result[0][1])
-                await reaction.message.delete() # delete image with a score of -3 or lower
-                await reaction.message.channel.send("Ich habe ein Bild von %s verschwinden lassen! 🤭" % (mentionUser(author)))
+                #message = await self.fetch_message(imgid)
+                await self.http.delete_message(payload.channel_id, payload.message_id) # delete image with a score of -3 or lower!
+                await channel.send("Ich habe ein Bild von %s verschwinden lassen! 🤭" % (mentionUser(author)))
         else:
             if removal:
                 cmd = "UPDATE tblVoting SET vVotes = vVotes - 1 WHERE vMessage = '%s'" % (imgid)
                 executeSql(cmd)
-                cmd = "SELECT vVotes,vAuthor FROM tblVoting WHERE vMessage = '%s'" % (reaction.message.id)
+                cmd = "SELECT vVotes,vAuthor FROM tblVoting WHERE vMessage = '%s'" % (payload.message_id)
                 result = executeSql(cmd)
                 if int(result[0][0]) <= -3:
                     author = await self.fetch_user(result[0][1])
-                    await reaction.message.delete() # delete image with a score of -3 or lower
-                    await reaction.message.channel.send("Ich habe ein Bild von %s verschwinden lassen! 🤭" % (mentionUser(author)))
+                    #message = await self.fetch_message(imgid)
+                    await self.http.delete_message(payload.channel_id, payload.message_id) # delete image with a score of -3 or lower
+                    await channel.send("Ich habe ein Bild von %s verschwinden lassen! 🤭" % (mentionUser(author)))
                 return
             
             cmd = "UPDATE tblVoting SET vVotes = vVotes + 1 WHERE vMessage = '%s'" % (imgid)
