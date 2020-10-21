@@ -71,6 +71,8 @@ class Comie(discord.Client):
             if len(params) == 0 or str(params[0]) == "help":
                 await roulette.sendhelp(self, message.author)
                 return
+            elif params[0] == "stats":
+                await roulette.sendstats(self, message)
             else:
                 if int(params[-1]) < 1 or int(params[-1]) > 250:
                     await message.channel.send("Sorry %s, deine Bet muss zwischen 1 und 250 liegen. 😟" % mentionUser(message.author))

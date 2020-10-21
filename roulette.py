@@ -106,6 +106,10 @@ async def registerplayer(user):
     except:
         return False
 
+async def getplayerstats(user):
+    cmd = "SELECT uChips, uCreated FROM tblUser WHERE uID = '%s'" % (user.id)
+    return executeSql(cmd)[0]
+
 # [Win, WinAmount, WinningNumber, IsRed]
 async def checkforwin(user, params):
     rnd = random.randint(0,35)
@@ -159,7 +163,13 @@ class roulette():
         msg = msg + "\n->Mehrfache Bets (Verschiedene Gewinne):\n-->!r [0,1,...,37] [Bet] - Setzt [Bet] Chips auf eine bestimmte Zahl. (Gewinn: 35:1)"
         await user.send(msg)       
         return
-    
+
+    async def sendstats(self, message):
+        stats = await getplayerstats(message.author)
+        msg = "Hi %s! Hier sind deine Statistiken:\nChips: %d\nRegistriert seit: %s" % (mentionUser(message.author), stats[0], stats[1])
+        await message.channel.send(msg)
+        return
+
     async def play(self, message):
         user = message.author
         if not await isplayerregistered(user):
