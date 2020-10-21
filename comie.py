@@ -5,6 +5,7 @@ from secretsanta import secretsanta
 from imgur import imgur
 from joker import joker
 from git import git
+from roulette import roulette
 import mysql.connector
 import time
 
@@ -64,6 +65,21 @@ class Comie(discord.Client):
             await secretsanta.exec(self, message)
             return
 
+        #### ROULETTE
+        elif message.content.startswith("!roulette") or message.content.startswith("!r"):
+            params = message.content.split(" ")[1:]
+            if len(params) == 0 or str(params[0]) == "help":
+                await roulette.sendhelp(self, message.author)
+                return
+            else:
+                if int(params[-1]) < 1 or int(params[-1]) > 250:
+                    await message.channel.send("Sorry %s, deine Bet muss zwischen 1 und 250 liegen. 😟" % mentionUser(message.author))
+                    return
+                
+                await roulette.play(self, message)
+                return
+            return
+
         ##### IMGUR
         elif message.content.startswith("!img"):
             await message.channel.send("Hier kommt ein zufälliges Bild für dich %s ~(^__^)~" % (mentionUser(message.author)))
@@ -71,6 +87,7 @@ class Comie(discord.Client):
 
             return
 
+        ##### IMGUR - RESULTS
         elif message.content.startswith("!results") and str(message.author) in adminNames:
             results = await imgur.postResults(self, message.channel)
             winmsg = await message.channel.fetch_message(results[0])
