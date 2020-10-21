@@ -32,15 +32,18 @@ mydb = mysql.connector.connect(
 sql = mydb.cursor()
 
 def executeSql(cmd):
+    mydb.connect()
     print("Trying to execute: " + cmd)
     if cmd.startswith("SELECT"):
         sql.execute(cmd)
         result = sql.fetchall()
+        mydb.close()
         return result
     else:
         # insert, update or delete
         sql.execute(cmd)
         mydb.commit()
+        mydb.close()
         return
 
 class imgur():

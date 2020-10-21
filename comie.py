@@ -20,14 +20,14 @@ except:
     print("Couldnt find database credentials in .dbcred file. Exiting.")
     exit()
 
-mydb = mysql.connector.connect(
-  host=dbcred[0],
-  user=dbcred[1],
-  password=dbcred[2],
-  database=dbcred[3]
-)
+#mydb = mysql.connector.connect(
+#  host=dbcred[0],
+#  user=dbcred[1],
+#  password=dbcred[2],
+#  database=dbcred[3]
+#)
 
-sql = mydb.cursor()
+#sql = mydb.cursor()
 
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
