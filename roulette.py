@@ -179,14 +179,18 @@ class roulette():
         msg = message.content.lower()
         params = msg.split(" ")[1:]
         bet = int(params[-1])
+        currentchips = await getplayerchips(user)
+        if bet > currentchips:
+            await message.channel.send("Sorry %s, du kannst keine %d Chips wetten wenn du nur %d hast. 😅" % (mentionUser(user), bet, currentchips))
+            return
         
         win = await checkforwin(user, params)
 
         if not win[0]:
             if win[3]:
-                await message.channel.send("Sorry %s, die Kugel landete auf %d Rot.😅 Du verlierst deine %d Chips. 😐" % (mentionUser(user), win[2], bet))
+                await message.channel.send("Sorry %s, die Kugel landete auf %d Rot. 😅 Du verlierst deine %d Chips. 😐" % (mentionUser(user), win[2], bet))
             else:
-                await message.channel.send("Sorry %s, die Kugel landete auf %d Schwarz.😅 Du verlierst deine %d Chips. 😐" % (mentionUser(user), win[2], bet))
+                await message.channel.send("Sorry %s, die Kugel landete auf %d Schwarz. 😅 Du verlierst deine %d Chips. 😐" % (mentionUser(user), win[2], bet))
 
             await giveplayerchips(user, -bet)
         else:
