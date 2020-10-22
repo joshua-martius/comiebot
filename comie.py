@@ -68,11 +68,19 @@ class Comie(discord.Client):
         #### ROULETTE
         elif message.content.startswith("!roulette") or message.content.startswith("!r"):
             params = message.content.split(" ")[1:]
+            accepted = ["stats","top","red","black","even","uneven","high","low"]
             if len(params) == 0 or str(params[0]) == "help":
                 await roulette.sendhelp(self, message.author)
                 return
             elif params[0] == "stats":
                 await roulette.sendstats(self, message)
+                return
+            elif params[0] == "top":
+                await roulette.sendtoplist(self, message)
+                return
+            elif not params[0].isnumeric() and params[0] not in accepted:
+                await message.channel.send("Den Befehl kenne ich nicht. Unter !r help findest Du alle möglichen Befehle.")
+                return
             else:
                 if int(params[-1]) < 1 or int(params[-1]) > 250:
                     await message.channel.send("Sorry %s, deine Bet muss zwischen 1 und 250 liegen. 😟" % mentionUser(message.author))

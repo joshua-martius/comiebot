@@ -161,12 +161,23 @@ class roulette():
         msg = msg + "-->!r red/black [Bet] - Setzt [Bet] Chips auf Rot oder Schwarz\n-->!r even/uneven [Bet] - Setzt [Bet] Chips auf die Gerade oder Ungeraden Zahlen"
         msg = msg + "\n-->!r high/low [Bet] - Setzt [Bet] Chips auf die hohen (19-36) oder niedrigen (1-18) Zahlen"
         msg = msg + "\n->Mehrfache Bets (Verschiedene Gewinne):\n-->!r [0,1,...,37] [Bet] - Setzt [Bet] Chips auf eine bestimmte Zahl. (Gewinn: 35:1)"
-        await user.send(msg)       
+        await user.send(msg)
+        await user.send("Weitere Befehle sind:\n!r stats - Zeigt deine Statistik an\n!r top - Zeigt die aktuelle Toplist an")
         return
 
     async def sendstats(self, message):
         stats = await getplayerstats(message.author)
         msg = "Hi %s! Hier sind deine Statistiken:\nChips: %d\nRegistriert seit: %s" % (mentionUser(message.author), stats[0], stats[1])
+        await message.channel.send(msg)
+        return
+
+    async def sendtoplist(self, message):
+        cmd = "SELECT uChips, uID FROM tblUser ORDER BY uChips DESC LIMIT 3"
+        result = executeSql(cmd)
+        msg = "Die aktuell %d besten Roulette Spieler:\n" % (len(result))
+        for i in range(len(result)):
+            user = await self.fetch_user(result[i][1])
+            msg = msg + "%d. %s (%d Chips)\n" % ((i+1), mentionUser(user), result[i][0])
         await message.channel.send(msg)
         return
 
