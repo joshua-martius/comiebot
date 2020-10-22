@@ -82,8 +82,8 @@ class Comie(discord.Client):
                 await message.channel.send("Den Befehl kenne ich nicht. Unter !r help findest Du alle möglichen Befehle.")
                 return
             else:
-                if int(params[-1]) < 1 or int(params[-1]) > 1000:
-                    await message.channel.send("Sorry %s, deine Bet muss zwischen 1 und 1000 liegen. 😟" % mentionUser(message.author))
+                if int(params[-1]) < 1:
+                    await message.channel.send("Sorry %s, deine Bet muss mindestens 1 sein. 😟" % mentionUser(message.author))
                     return
                 
                 await roulette.play(self, message)
