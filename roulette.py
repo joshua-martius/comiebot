@@ -68,7 +68,7 @@ sql = mydb.cursor()
 
 def executeSql(cmd):
     mydb.connect()
-    print("Trying to execute: " + cmd)
+    print("Executing:: " + cmd)
     if cmd.startswith("SELECT"):
         sql.execute(cmd)
         result = sql.fetchall()
