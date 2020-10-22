@@ -102,6 +102,8 @@ class imgur():
                 #message = await self.fetch_message(imgid)
                 await self.http.delete_message(payload.channel_id, payload.message_id) # delete image with a score of -3 or lower!
                 await channel.send("Ich habe ein Bild von %s verschwinden lassen! 🤭" % (mentionUser(author)))
+                cmd = "DELETE FROM tblVoting WHERE vMessage = '%s'" % (payload.message_id)
+                executeSql(cmd)
         else:
             if removal:
                 cmd = "UPDATE tblVoting SET vVotes = vVotes - 1 WHERE vMessage = '%s'" % (imgid)
@@ -110,9 +112,10 @@ class imgur():
                 result = executeSql(cmd)
                 if int(result[0][0]) <= -3:
                     author = await self.fetch_user(result[0][1])
-                    #message = await self.fetch_message(imgid)
                     await self.http.delete_message(payload.channel_id, payload.message_id) # delete image with a score of -3 or lower
                     await channel.send("Ich habe ein Bild von %s verschwinden lassen! 🤭" % (mentionUser(author)))
+                    cmd = "DELETE FROM tblVoting WHERE vMessage = '%s'" % (payload.message_id)
+                    executeSql(cmd)
                 return
             
             cmd = "UPDATE tblVoting SET vVotes = vVotes + 1 WHERE vMessage = '%s'" % (imgid)
