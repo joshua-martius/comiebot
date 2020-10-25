@@ -68,7 +68,7 @@ sql = mydb.cursor()
 
 def executeSql(cmd):
     mydb.connect()
-    print("Executing:: " + cmd)
+    print("Executing: " + cmd)
     if cmd.startswith("SELECT"):
         sql.execute(cmd)
         result = sql.fetchall()
@@ -88,8 +88,9 @@ def mentionUser(user):
     return "<@" + str(user.id) + ">"
 
 async def giveplayerchips(user, chips):
-    cmd = "UPDATE tblUser SET uChips = uChips + %d WHERE uID = '%s'" % (chips, user.id)
-    executeSql(cmd)
+    if await isplayerregistered(user):
+        cmd = "UPDATE tblUser SET uChips = uChips + %d WHERE uID = '%s'" % (chips, user.id)
+        executeSql(cmd)
     return
 
 async def getplayerchips(user):
@@ -192,22 +193,47 @@ class roulette():
         return
 
     async def give(self, message):
-        print(message.content)
         user = message.author
         msg = message.content
         params = msg.split(" ")[1:]
-        receiver = await self.fetch_user(getUserFromString(params[1]))
+        receiver = ""
+        if params[1] != "@everyone":
+            receiver = await self.fetch_user(getUserFromString(params[1]))
         amount = int(params[-1])
-        if await getplayerchips(user) < amount:
-            await message.channel.send("Sehr löblich von dir %s, aber du kannst nicht mehr Chips ausgeben als du besitzt (%d)." % (mentionUser(user), currentchips))
+        userbalance = await getplayerchips(user)
+
+        if userbalance < amount:
+            await message.channel.send("Sehr löblich von dir %s, aber du kannst nicht mehr Chips ausgeben als du besitzt (%d)." % (mentionUser(user), userbalance))
             return
         elif amount < 1:
             await message.channel.send("Netter Versuch.... %s ...zur Strafe ziehe ich dir 10 Chips ab!" % (mentionUser(user)))
             await giveplayerchips(user, -10)
+        elif params[1] not in "@everyone" and not await isplayerregistered(receiver):
+            await message.channel.send("Sorry, %s. %s ist nicht fürs Roulette angemeldet." % (mentionUser(user), mentionUser(receiver)))
+            return
         else:
-            await giveplayerchips(user, -amount)
-            await giveplayerchips(receiver, amount)
-            await message.channel.send("%s hat %s %d Chips gegeben. 🦕 " % (mentionUser(user), mentionUser(receiver), amount))
+            if params[1] != "@everyone":
+                await giveplayerchips(user, -amount)
+                await giveplayerchips(receiver, amount)
+                await message.channel.send("%s hat %s %d Chips gegeben. 🦕 " % (mentionUser(user), mentionUser(receiver), amount))
+            else:
+                receivers = []
+                users = message.channel.guild.members
+                for u in users:
+                    if str(u.status) == "offline" or u.bot or u == user or not await isplayerregistered(u):
+                        continue
+                    else:
+                        receivers.append(u)
+                
+                if len(receivers) * amount > userbalance:
+                    await message.channel.send("Sehr löblich von dir %s, aber du kannst dir nicht leisten allen soviel zu schenken." % (mentionUser(user)))
+                    return
+                else:
+                    await giveplayerchips(user, -(len(receivers) * amount))
+                    for u in receivers:
+                        await giveplayerchips(u, amount)
+                    
+                    await message.channel.send("🍾🍾🍾 %s hat allen %d Online-Spielern %d Chips geschenkt!!! 🍾🍾🍾" % (mentionUser(user), len(receivers) ,amount))
             return
 
     async def play(self, message):
