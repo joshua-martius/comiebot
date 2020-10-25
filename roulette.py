@@ -81,6 +81,9 @@ def executeSql(cmd):
         mydb.close()
         return
 
+def getUserFromString(message):
+    return message[3:-1]
+
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
 
@@ -189,12 +192,13 @@ class roulette():
         return
 
     async def give(self, message):
+        print(message.content)
         user = message.author
         msg = message.content
         params = msg.split(" ")[1:]
-        receiver = params[1]
+        receiver = await self.fetch_user(getUserFromString(params[1]))
         amount = int(params[-1])
-        if getplayerchips(user) < amount:
+        if await getplayerchips(user) < amount:
             await message.channel.send("Sehr löblich von dir %s, aber du kannst nicht mehr Chips ausgeben als du besitzt (%d)." % (mentionUser(user), currentchips))
             return
         elif amount < 1:
@@ -203,7 +207,7 @@ class roulette():
         else:
             await giveplayerchips(user, -amount)
             await giveplayerchips(receiver, amount)
-            await message.channel.send("%s hat %s %d gegeben. 🦕 " % (user, receiver, amount))
+            await message.channel.send("%s hat %s %d Chips gegeben. 🦕 " % (mentionUser(user), mentionUser(receiver), amount))
             return
 
     async def play(self, message):
