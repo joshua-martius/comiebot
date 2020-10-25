@@ -68,7 +68,7 @@ class Comie(discord.Client):
         #### ROULETTE
         elif message.content.startswith("!roulette") or message.content.startswith("!r"):
             params = message.content.split(" ")[1:]
-            accepted = ["stats","top","red","black","even","uneven","high","low"]
+            accepted = ["stats","top","red","black","even","uneven","high","low","chart","give"]
             if len(params) == 0 or str(params[0]) == "help":
                 await roulette.sendhelp(self, message.author)
                 return
@@ -77,6 +77,12 @@ class Comie(discord.Client):
                 return
             elif params[0] == "top":
                 await roulette.sendtoplist(self, message)
+                return
+            elif params[0] == "chart":
+                await roulette.showchart(self, message)
+                return
+            elif params[0] == "give":	#!r give y0sh1#1990 100 (gibt y0sh1 100 chips)... so die theorie
+                await roulette.give(self, message)
                 return
             elif not params[0].isnumeric() and params[0] not in accepted:
                 await message.channel.send("Den Befehl kenne ich nicht. Unter !r help findest Du alle möglichen Befehle.")

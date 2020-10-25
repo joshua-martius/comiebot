@@ -162,7 +162,9 @@ class roulette():
         msg = msg + "\n-->!r high/low [Bet] - Setzt [Bet] Chips auf die hohen (19-36) oder niedrigen (1-18) Zahlen"
         msg = msg + "\n->Mehrfache Bets (Verschiedene Gewinne):\n-->!r [0,1,...,37] [Bet] - Setzt [Bet] Chips auf eine bestimmte Zahl. (Gewinn: 35:1)"
         await user.send(msg)
-        await user.send("Weitere Befehle sind:\n!r stats - Zeigt deine Statistik an\n!r top - Zeigt die aktuelle Toplist an")
+        await user.send("Weitere Befehle sind:\n!r stats - Zeigt deine Statistik an\n!r top - Zeigt die aktuelle Toplist an.")
+        await user.send("\n-->!r give KnuT#7402 [Chips] gibt dem Benutzer Knut#7402 Chips aus dem eigenen Konto.")
+		await user.send("\n-->!r chart zeigt auf eine Auswertung an.")
         return
 
     async def sendstats(self, message):
@@ -180,6 +182,29 @@ class roulette():
             msg = msg + "%d. %s (%d Chips)\n" % ((i+1), mentionUser(user), result[i][0])
         await message.channel.send(msg)
         return
+
+    async def showchart(self, message):
+        msg ="https://link-to-chart.tld/page.php?nothing=something"
+        await message.channel.send(msg)
+        return
+
+    async def give(self, message):
+        user = message.author
+        msg = message.content
+        params = msg.split(" ")[1:]
+        reciever = params[1]
+        amount = int(params[-1])
+        if getplayerchips(user) < amount:
+            await message.channel.send("Sehr löblich von dir %s, aber du kannst nicht mehr Chips ausgeben als du besitzt (%d)." % (mentionUser(user), currentchips))
+            return
+        elif amount < 1:
+            await message.channel.send("Netter Versuch.... %s ...zur Strafe ziehe ich dir 10 Chips ab!" % (mentionUser(user)))
+            await giveplayerchips(user, 10)
+        else:
+            await giveplayerchips(user, -amount)
+            await giveplayerchips(reciever, amount)
+            await message.channel.send("%s hat %s %d gegeben. 🦕 " % (user, reciever, amount))
+            return
 
     async def play(self, message):
         user = message.author
