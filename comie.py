@@ -91,7 +91,6 @@ class Comie(discord.Client):
                 if int(params[-1]) < 1:
                     await message.channel.send("Sorry %s, deine Bet muss mindestens 1 sein. 😟" % mentionUser(message.author))
                     return
-                
                 await roulette.play(self, message)
                 return
             return
@@ -108,11 +107,10 @@ class Comie(discord.Client):
             results = await imgur.postResults(self, message.channel)
             winmsg = await message.channel.fetch_message(results[0])
             winner = await self.fetch_user(results[2])
-            
             await message.channel.send("Gewonnen hat %s mit %d Votes für das gepinnte Bild!" % (mentionUser(winner), int(results[1])))
             await winmsg.pin()
             return
-        
+
         #### JOKE
         elif message.content.startswith("!joke"):
             await joker.exec(self, message)

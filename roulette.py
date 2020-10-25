@@ -164,7 +164,7 @@ class roulette():
         await user.send(msg)
         await user.send("Weitere Befehle sind:\n!r stats - Zeigt deine Statistik an\n!r top - Zeigt die aktuelle Toplist an.")
         await user.send("\n-->!r give KnuT#7402 [Chips] gibt dem Benutzer Knut#7402 Chips aus dem eigenen Konto.")
-		await user.send("\n-->!r chart zeigt auf eine Auswertung an.")
+        await user.send("\n-->!r chart zeigt auf eine Auswertung an.")
         return
 
     async def sendstats(self, message):
@@ -192,18 +192,18 @@ class roulette():
         user = message.author
         msg = message.content
         params = msg.split(" ")[1:]
-        reciever = params[1]
+        receiver = params[1]
         amount = int(params[-1])
         if getplayerchips(user) < amount:
             await message.channel.send("Sehr löblich von dir %s, aber du kannst nicht mehr Chips ausgeben als du besitzt (%d)." % (mentionUser(user), currentchips))
             return
         elif amount < 1:
             await message.channel.send("Netter Versuch.... %s ...zur Strafe ziehe ich dir 10 Chips ab!" % (mentionUser(user)))
-            await giveplayerchips(user, 10)
+            await giveplayerchips(user, -10)
         else:
             await giveplayerchips(user, -amount)
-            await giveplayerchips(reciever, amount)
-            await message.channel.send("%s hat %s %d gegeben. 🦕 " % (user, reciever, amount))
+            await giveplayerchips(receiver, amount)
+            await message.channel.send("%s hat %s %d gegeben. 🦕 " % (user, receiver, amount))
             return
 
     async def play(self, message):
