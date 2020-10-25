@@ -157,7 +157,7 @@ async def checkforwin(user, params):
 class roulette():
 
     async def sendhelp(self, user):
-        msg = "Hi %s!\nSo spielst du Roulette:\n->Einfache Bets (1:1 Gewinn):\n" % mentionUser(user)
+        msg = "Hi %s!\nSo spielst du Roulette:\n->Einfache Bets (1:2 Gewinn):\n" % mentionUser(user)
         msg = msg + "-->!r red/black [Bet] - Setzt [Bet] Chips auf Rot oder Schwarz\n-->!r even/uneven [Bet] - Setzt [Bet] Chips auf die Gerade oder Ungeraden Zahlen"
         msg = msg + "\n-->!r high/low [Bet] - Setzt [Bet] Chips auf die hohen (19-36) oder niedrigen (1-18) Zahlen"
         msg = msg + "\n->Mehrfache Bets (Verschiedene Gewinne):\n-->!r [0,1,...,37] [Bet] - Setzt [Bet] Chips auf eine bestimmte Zahl. (Gewinn: 35:1)"
@@ -210,4 +210,3 @@ class roulette():
             else:
                 await message.channel.send("✨✨✨ Glückwunsch %s!!! Du hast mit der Wette auf %d Schwarz !!%d!! Chips gewonnen! 🍾🍾🍾" % (mentionUser(user), win[2] , win[1]))
         return
-
