@@ -12,3 +12,15 @@ Sends a random Imgur image into the current channel.
 Plays Roulette with the players
 ### Secret Santa
 Gives every user with a specified role a secret santa.
+
+## Installation:
+### Python package requirements
+*Python >3.6*
+- pip install discord.py
+- pip install pillow
+- pip install python-git
+- pip install requests
+- pip install mysql-connector-python
+
+### Database
+- MySQL
