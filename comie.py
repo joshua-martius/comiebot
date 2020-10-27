@@ -58,6 +58,10 @@ class Comie(discord.Client):
         if not message.content.startswith("!"):
             return
 
+        if str(message.guild) == "None":
+            await message.channel.send("Ich reagiere nicht auf Befehle im privaten Chat! 😛")
+            return
+
         message.content = str(message.content).lower()
 
         ##### SECRET SANTA
