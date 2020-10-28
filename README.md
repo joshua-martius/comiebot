@@ -13,6 +13,7 @@ Plays Roulette with the players
 ### Secret Santa
 Gives every user with a specified role a secret santa.
 
+<<<<<<< HEAD
 ## Configuration
 A local config.json has to exist in the following form:
 ```
@@ -32,3 +33,16 @@ A local config.json has to exist in the following form:
     }
 }
 ```
+=======
+## Installation:
+### Python package requirements
+*Python >3.6*
+- pip install discord.py
+- pip install pillow
+- pip install python-git
+- pip install requests
+- pip install mysql-connector-python
+
+### Database
+- MySQL
+>>>>>>> 4547d00943e03fb9f6c38a19c8124b51af6ad496
