@@ -5,27 +5,20 @@ import string
 import urllib.request
 from PIL import Image
 import mysql.connector
+import json
+
+config = json.loads(open("./config.json","r").read())
 
 images = []
 
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
 
-dbcred = []
-try:
-    with open("./.dbcred") as file:
-        for i in range(4):
-            line = file.readline()
-            dbcred.append(line.strip('\n'))
-except:
-    print("Couldnt find database credentials in .dbcred file. Exiting.")
-    exit()
-
 mydb = mysql.connector.connect(
-  host=dbcred[0],
-  user=dbcred[1],
-  password=dbcred[2],
-  database=dbcred[3]
+  host=config["db"]["host"],
+  user=config["db"]["user"],
+  password=config["db"]["password"],
+  database=config["db"]["name"]
 )
 
 

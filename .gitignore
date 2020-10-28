@@ -1,6 +1,5 @@
 #custom
-.dbcred
-.token
+config.json
 img.png
 
 # Byte-compiled / optimized / DLL files

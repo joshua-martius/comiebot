@@ -12,3 +12,23 @@ Sends a random Imgur image into the current channel.
 Plays Roulette with the players
 ### Secret Santa
 Gives every user with a specified role a secret santa.
+
+## Configuration
+A local config.json has to exist in the following form:
+```
+{
+    "discord":{
+        "token": ""
+    },
+    "db": {
+        "host": "",
+        "user": "",
+        "password": "",
+        "name": ""
+    },
+    "secretsanta":
+    {
+        "rolename": ""
+    }
+}
+```

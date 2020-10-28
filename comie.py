@@ -11,22 +11,10 @@ import time
 
 adminNames = ["y0sh1#1990", "Sh4ky#3017"]
 
-dbcred = []
-try:
-    with open("./.dbcred") as file:
-        for i in range(4):
-            line = file.readline()
-            dbcred.append(line.strip('\n'))
-except:
-    print("Couldnt find database credentials in .dbcred file. Exiting.")
-    exit()
-
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
 
 class Comie(discord.Client):
-    santaRoleName = "Wichtel"
-
     ### REACIONS
     async def on_raw_reaction_add(self, payload):
         if payload.emoji.name != "👍" and payload.emoji.name != "👀":
