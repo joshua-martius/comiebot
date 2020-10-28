@@ -5,6 +5,7 @@ import string
 import urllib.request
 from PIL import Image
 import mysql.connector
+import plotly.graph_objects as go
 import json
 
 # False = Black
@@ -188,8 +189,17 @@ class roulette():
         return
 
     async def showchart(self, message):
-        msg ="https://link-to-chart.tld/page.php?nothing=something"
-        await message.channel.send(msg)
+        cmd = "SELECT uName, uChips FROM tblUser"
+        result = executeSql(cmd)
+        labels = []
+        values = []
+        for row in result:
+            labels.append(row[0])
+            values.append(row[1])
+        
+        fig = go.Figure([go.Bar(x=labels,y=values)])
+        fig.write_image("./chart.png")
+        await message.channel.send(file=discord.File('chart.png'))
         return
 
     async def give(self, message):
