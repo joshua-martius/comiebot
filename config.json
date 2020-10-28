@@ -1,0 +1,15 @@
+{
+    "discord":{
+        "token": ""
+    },
+    "db": {
+        "host": "",
+        "user": "",
+        "password": "",
+        "name": ""
+    },
+    "secretsanta":
+    {
+        "rolename": "Wichtel"
+    }
+}

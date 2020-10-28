@@ -1,6 +1,9 @@
 
 from discord import utils
 import random
+import json
+
+config = json.loads(open("./config.json","r").read())
 
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
@@ -14,7 +17,7 @@ class secretsanta():
             await message.author.send("Wichteln kann nicht aus einem privaten Chat heraus gestartet werden!")
             return
 
-        role = utils.get(message.guild.roles, name=self.santaRoleName)
+        role = utils.get(message.guild.roles, name=config["secretsanta"]["rolename"])
         santas = []
         for u in users:
             if role in u.roles:
