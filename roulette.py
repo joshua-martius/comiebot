@@ -259,6 +259,9 @@ class roulette():
         if bet > currentchips:
             await message.channel.send("Sorry %s, du kannst keine %d Chips wetten wenn du nur %d hast. 😅" % (mentionUser(user), bet, currentchips))
             return
+        elif config["roulette"]["maxbet"] != -1 and bet > config["roulette"]["maxbet"]:
+            await message.channel.send("Sorry %s, aktuell kann man nur maximal %d Chips setzen." % (mentionUser(user), config["roulette"]["maxbet"]))
+            return
         
         win = await checkforwin(user, params)
 
