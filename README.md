@@ -26,6 +26,10 @@ A local config.json has to exist in the following form:
         "password": "",
         "name": ""
     },
+    "roulette":
+    {
+        "maxbet": -1
+    },
     "secretsanta":
     {
         "rolename": ""
