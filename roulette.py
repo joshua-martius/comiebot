@@ -194,9 +194,7 @@ class roulette():
         labels = []
         values = []
         for row in result:
-            name = row[0]
-            name = name[:name.index("#")]
-            labels.append(name)
+            labels.append(row[0][:row[0].index("#")])
             values.append(row[1])
         
         fig = go.Figure([go.Bar(x=labels,y=values)])
