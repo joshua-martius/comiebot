@@ -18,7 +18,8 @@ A local config.json has to exist in the following form:
 ```
 {
     "discord":{
-        "token": ""
+        "token": "",
+        "admins": ["",""]
     },
     "db": {
         "host": "",

@@ -189,7 +189,7 @@ class roulette():
         return
 
     async def showchart(self, message):
-        cmd = "SELECT uName, uChips FROM tblUser"
+        cmd = "SELECT uName, uChips FROM tblUser ORDER BY uChips DESC"
         result = executeSql(cmd)
         labels = []
         values = []

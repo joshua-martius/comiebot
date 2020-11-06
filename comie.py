@@ -8,8 +8,9 @@ from git import git
 from roulette import roulette
 import mysql.connector
 import time
+import json
 
-adminNames = ["y0sh1#1990", "Sh4ky#3017"]
+config = json.loads(open("./config.json","r").read())
 
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
@@ -46,7 +47,7 @@ class Comie(discord.Client):
         if not message.content.startswith("!"):
             return
         
-        if str(message.guild) == "None":
+        if str(message.guild) == "None" and str(message.author) not in config["discord"]["admins"]:
             await message.channel.send("Ich reagiere nicht auf Befehle im privaten Chat! 😛")
             return
 
@@ -55,7 +56,7 @@ class Comie(discord.Client):
         command = message.content.split(' ')[0][1:]
 
         ##### SECRET SANTA
-        if command == "wichteln" and str(message.author) in adminNames:
+        if command == "wichteln" and str(message.author) in config["discord"]["admins"]:
             await secretsanta.exec(self, message)
             return
 
