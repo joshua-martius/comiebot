@@ -18,7 +18,8 @@ A local config.json has to exist in the following form:
 ```
 {
     "discord":{
-        "token": ""
+        "token": "",
+        "admins": ["",""]
     },
     "db": {
         "host": "",
@@ -36,3 +37,16 @@ A local config.json has to exist in the following form:
     }
 }
 ```
+## Installation:
+### Python package requirements
+*Python >3.6*
+- pip install discord.py
+- pip install pillow
+- pip install python-git
+- pip install requests
+- pip install mysql-connector-python
+- pip install kaleido
+- pip install plotly
+
+### Database
+- MySQL
