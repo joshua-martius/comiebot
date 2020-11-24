@@ -56,8 +56,11 @@ class Comie(discord.Client):
         command = message.content.split(' ')[0][1:]
 
         ##### SECRET SANTA
-        if command == "wichteln" and str(message.author) in config["discord"]["admins"]:
-            await secretsanta.exec(self, message)
+        if command == "wichteln":
+            if str(message.author) == config["secretsanta"]["organizer"]:
+                await secretsanta.exec(self, message)
+            else:
+                await secretsanta.register(self, message)
             return
 
         #### ROULETTE
@@ -93,12 +96,16 @@ class Comie(discord.Client):
         ##### IMGUR
         elif command == "img":
             await message.channel.send("Hier kommt ein zufälliges Bild für dich %s ~(^__^)~" % (mentionUser(message.author)))
-            await imgur.postImage(self, message, message.author)
+            await imgur.postImage(self, message, message.author,"img")
+            return
 
+        elif command == "pro":
+            await message.channel.send("Hier kommt ein zufälliges pr0gramm Bild für dich %s ~(^__^)~" % (mentionUser(message.author)))
+            await imgur.postImage(self, message, message.author,"pro")
             return
 
         ##### IMGUR - RESULTS
-        elif command == "results" and str(message.author) in adminNames:
+        elif command == "results" and str(message.author) in config["discord"]["admins"]:
             results = await imgur.postResults(self, message.channel)
             winmsg = await message.channel.fetch_message(results[0])
             winner = await self.fetch_user(results[2])
