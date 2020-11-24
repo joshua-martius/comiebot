@@ -25,6 +25,7 @@ class secretsanta():
 
     async def exec(self, message):
         debug = message.content.endswith("debug")
+        users = []
         try:
             users = message.guild.members
         except:
@@ -34,7 +35,7 @@ class secretsanta():
         role = utils.get(message.guild.roles, name=config["secretsanta"]["rolename"])
         santas = []
         for u in users:
-            if role in u.roles:
+            if role in u.roles and not u.bot:
                 santas.append(u)
         
         if len(santas) < 3:
