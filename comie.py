@@ -96,12 +96,12 @@ class Comie(discord.Client):
         ##### IMGUR
         elif command == "img":
             await message.channel.send("Hier kommt ein zufälliges Bild für dich %s ~(^__^)~" % (mentionUser(message.author)))
-            await imgur.postImage(self, message, message.author,"img")
+            await imgur.postImage(self, message, message.author)
             return
 
         elif command == "pro":
-            await message.channel.send("Hier kommt ein zufälliges pr0gramm Bild für dich %s ~(^__^)~" % (mentionUser(message.author)))
-            await imgur.postImage(self, message, message.author,"pro")
+            #await message.channel.send("Hier kommt ein zufälliges pr0gramm Bild für dich %s ~(^__^)~" % (mentionUser(message.author)))
+            #await imgur.postImage(self, message, message.author,"pro")
             return
 
         ##### IMGUR - RESULTS
