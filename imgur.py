@@ -53,12 +53,14 @@ class imgur():
                 await message.channel.send("Ich habe nach %d Versuchen kein neues Bild finden können </3" % (tries))
                 return
             id = ''.join(random.choice(chars) for i in range(length))
+            if id in images:
+                continue
             url = "%s/%s.png" % (baseString, id)
             
             try:
                 urllib.request.urlretrieve(url, './img.png')
                 with Image.open("img.png") as img:
-                    if img.width != 161 and img.height != 81 and id not in images: # in case of the imgur error image
+                    if img.width != 161 and img.height != 81: # in case of the imgur error image
                         break
             except:
                 continue
