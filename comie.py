@@ -9,8 +9,10 @@ from roulette import roulette
 import mysql.connector
 import time
 import json
+from datetime import datetime
 
 config = json.loads(open("./config.json","r").read())
+
 
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
@@ -38,6 +40,8 @@ class Comie(discord.Client):
     ### READY MESSAGE
     async def on_ready(self):
         print("Bot is up and running.")
+        global startdate
+        startdate = datetime.utcnow()
         return
     
     async def on_message(self, message):
@@ -61,6 +65,15 @@ class Comie(discord.Client):
                 await secretsanta.exec(self, message)
             else:
                 await secretsanta.register(self, message)
+            return
+
+        elif command == "uptime":
+            delta_uptime = datetime.utcnow() - startdate
+            hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
+            minutes, seconds = divmod(remainder, 60)
+            days, hours = divmod(hours, 24)
+            msg = "Ich bin seit %d Tagen, %d Stunden und %d Minuten online! 😁"
+            await message.channel.send(msg)
             return
 
         #### ROULETTE
