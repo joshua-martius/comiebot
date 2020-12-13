@@ -72,7 +72,7 @@ class Comie(discord.Client):
             hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
             minutes, seconds = divmod(remainder, 60)
             days, hours = divmod(hours, 24)
-            msg = "Ich bin seit %d Tagen, %d Stunden und %d Minuten online! 😁"
+            msg = "Ich bin seit %d Tagen, %d Stunden und %d Minuten online! 😁" % (days, hours, minutes)
             await message.channel.send(msg)
             return
 
