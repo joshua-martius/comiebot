@@ -144,7 +144,7 @@ class Comie(discord.Client):
         
         ##### COIN FLIP
         elif command == "coinflip":
-            await.coinflip.flip()
+            await coinflip.flip()
             return
 
         ##### UNKNOWN COMMAND
