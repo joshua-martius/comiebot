@@ -4,6 +4,7 @@ from discord import utils
 from secretsanta import secretsanta
 from imgur import imgur
 from joker import joker
+from coinflip import coinflip
 from git import git
 from roulette import roulette
 import mysql.connector
@@ -138,7 +139,12 @@ class Comie(discord.Client):
 
         ##### SELF HELP
         elif command == "help":
-            await message.channel.send("Hi " + mentionUser(message.author) + "!\nIch kann folgende Befehle bearbeiten:\n!help - Zeigt diese Hilfe an\n!img - Schickt ein zufälliges Bild in den aktuellen Channel (Upvote: 👍 | Downvote: 👀)\n!roulette (!r) - Spielt Roulette\n!wichteln - Startet eine Wichtelpaar Auslosung\n!joke - Erzählt einen Witz\n!bugs - Gibt alle bekannten Fehler aus")
+            await message.channel.send("Hi " + mentionUser(message.author) + "!\nIch kann folgende Befehle bearbeiten:\n!help - Zeigt diese Hilfe an\n!img - Schickt ein zufälliges Bild in den aktuellen Channel (Upvote: 👍 | Downvote: 👀)\n!roulette (!r) - Spielt Roulette\n!wichteln - Startet eine Wichtelpaar Auslosung\n!joke - Erzählt einen Witz\n!bugs - Gibt alle bekannten Fehler aus\n!coinflip - Wer hätte es gedacht...ne Münze wird geworfen ")
+            return
+        
+        ##### COIN FLIP
+        elif command == "coinflip":
+            await coinflip.flip(message)
             return
 
         ##### UNKNOWN COMMAND
