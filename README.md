@@ -14,7 +14,7 @@ Plays Roulette with the players
 Gives every user with a specified role a secret santa.
 ### Uptime
 Sends the time since the bot has started into the current channel.
-## Coinflip
+### Coinflip
 Flips a coin
 
 ## Configuration
