@@ -7,6 +7,7 @@ from joker import joker
 from coinflip import coinflip
 from git import git
 from roulette import roulette
+from dice import dice
 import mysql.connector
 import time
 import json
@@ -145,6 +146,10 @@ class Comie(discord.Client):
         ##### COIN FLIP
         elif command == "coinflip":
             await coinflip.flip(message)
+            return
+
+        elif command == "w":
+            await dice.exec(self,message)
             return
 
         ##### UNKNOWN COMMAND
