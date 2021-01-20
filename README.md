@@ -16,6 +16,8 @@ Gives every user with a specified role a secret santa.
 Sends the time since the bot has started into the current channel.
 ### Coinflip
 Flips a coin
+### Dice
+Throws a dice, see !help for usage.
 
 ## Configuration
 A local config.json has to exist in the following form:
