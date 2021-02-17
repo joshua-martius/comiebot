@@ -47,13 +47,13 @@ A local config.json has to exist in the following form:
 ## Installation:
 ### Python package requirements
 *Python >3.6*
-- pip install discord.py
-- pip install pillow
-- pip install python-git
-- pip install requests
-- pip install mysql-connector-python
-- pip install kaleido
-- pip install plotly
+- pip3 install discord.py
+- pip3 install pillow
+- pip3 install python-git
+- pip3 install requests
+- pip3 install mysql-connector-python
+- pip3 install kaleido
+- pip3 install plotly
 
 ### Database
 - MySQL
