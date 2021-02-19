@@ -12,9 +12,10 @@ import mysql.connector
 import time
 import json
 from datetime import datetime
+from planner import planner
+from weebnation import weebnation
 
 config = json.loads(open("./config.json","r").read())
-
 
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
@@ -143,6 +144,10 @@ class Comie(discord.Client):
             await message.channel.send("Hi " + mentionUser(message.author) + "!\nIch kann folgende Befehle bearbeiten:\n!help - Zeigt diese Hilfe an\n!img - Schickt ein zufälliges Bild in den aktuellen Channel (Upvote: 👍 | Downvote: 👀)\n!roulette (!r) - Spielt Roulette\n!wichteln - Startet eine Wichtelpaar Auslosung\n!joke - Erzählt einen Witz\n!bugs - Gibt alle bekannten Fehler aus\n!coinflip - Wirft eine Münze\n!w [SeitenAnzahl] [WüfelAnzahl] - Wirft [WürfelAnzahl=1] Würfel mit [SeitenAnzahl] Seiten.")
             return
         
+        elif command == "cs":
+            await planner.exec(self,message)
+            return
+
         ##### COIN FLIP
         elif command == "coinflip":
             await coinflip.flip(message)
@@ -150,6 +155,17 @@ class Comie(discord.Client):
 
         elif command == "w":
             await dice.exec(self,message)
+            return
+
+        # weebnation
+        elif command == "a":
+            try:
+                if message.content.split(" ")[1] != "list":
+                    await weebnation.addAnime(self, message)
+                else:
+                    await weebnation.listAnimes(self, message)
+            except:
+                await message.channel.send("!a [Name] [Link] [Tag1,Tag2,...]")
             return
 
         ##### UNKNOWN COMMAND
