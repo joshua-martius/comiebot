@@ -162,6 +162,8 @@ class Comie(discord.Client):
             try:
                 if message.content.split(" ")[1] != "list":
                     await weebnation.addAnime(self, message)
+                elif message.content.split(" ")[1] == "find":
+                    await weebnation.findAnime(self, message)
                 else:
                     await weebnation.listAnimes(self, message)
             except:
