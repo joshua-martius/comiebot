@@ -37,7 +37,12 @@ class weebnation():
         link = [i for i in params if i.startswith('https://')][0]
         linkIndex = params.index(link)
         name = ' '.join(params[0:linkIndex])
-        tags = ''.join(params[linkIndex+1:])
+        taglist = neuerAnime.split(',')[0:]         # new split at comma
+        taglist[0] = taglist[0].split(' ')[-1]      # delete the command, title and link
+        tags = ''
+        for i in range(len(taglist)):
+            tags = tags + taglist[i].strip() + ', ' # strip the whitespaces 
+        tags = tags[:-2]                            # delete the last 2 characters (comma and space
         if name == None or link == None or tags == None:
             await channel.send("🤨: Du musst den Namen, einen Link und mindestens einen Tag angeben!🤷🏼‍♂️")
             return
@@ -55,9 +60,9 @@ class weebnation():
     async def listAnimes(self, message):
         cmd = "SELECT aTitle, aLink, aTags FROM tblAnime ORDER BY RAND() LIMIT 5"
         result = executeSql(cmd)
-        msg = "🤤: Hier 5 random Animes aus meiner Datenbank:\n"
         for i in range(len(result)):
-            msg = msg + ("%d. %s (%s) [%s]\n" % (i+1, result[i][0],result[i][1],result[i][2]))
+            msg = ("%d. %s (%s) [%s]\n" % (i+1, result[i][0],result[i][1],result[i][2]))
+        msg = "🤤: Hier " + i+1 + " random Animes aus meiner Datenbank:\n" + msg
         await message.channel.send(msg)
         return
     
