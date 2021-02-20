@@ -82,7 +82,7 @@ class weebnation():
             cmd = 'SELECT aTitle,aLink FROM tblAnime WHERE aTags LIKE \'%' + needle + '%\' OR aTitle LIKE \'%' + needle + '%\''
             result = executeSql(cmd)
             if result == None:
-                await channel.send("🤕: Sorry, ich habe für dich gekämpft, aber ich habe keine Anime mit diesem Tag gefunden...🏳️")
+                await channel.send("🤕: Sorry, ich habe für dich gekämpft, aber ich habe keine Anime mit diesem Tag oder Titel gefunden...🏳️")
                 return
             else:
                 msg = "😁: Ich habe folgende Anime gefunden:\n"
