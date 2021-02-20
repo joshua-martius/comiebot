@@ -37,7 +37,7 @@ class weebnation():
         link = [i for i in params if i.startswith('https://')][0]
         linkIndex = params.index(link)
         name = ' '.join(params[0:linkIndex])
-        taglist = neuerAnime.split(',')[0:]         # new split at comma
+        taglist = message.content.split(',')[0:]         # new split at comma
         taglist[0] = taglist[0].split(' ')[-1]      # delete the command, title and link
         tags = ''
         for i in range(len(taglist)):
