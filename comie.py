@@ -12,7 +12,7 @@ import mysql.connector
 import time
 import json
 from datetime import datetime
-from planner import planner
+from csdating import csdating
 from weebnation import weebnation
 
 config = json.loads(open("./config.json","r").read())
@@ -144,8 +144,13 @@ class Comie(discord.Client):
             await message.channel.send("Hi " + mentionUser(message.author) + "!\nIch kann folgende Befehle bearbeiten:\n!help - Zeigt diese Hilfe an\n!img - Schickt ein zufälliges Bild in den aktuellen Channel (Upvote: 👍 | Downvote: 👀)\n!roulette (!r) - Spielt Roulette\n!wichteln - Startet eine Wichtelpaar Auslosung\n!joke - Erzählt einen Witz\n!bugs - Gibt alle bekannten Fehler aus\n!coinflip - Wirft eine Münze\n!w [SeitenAnzahl] [WüfelAnzahl] - Wirft [WürfelAnzahl=1] Würfel mit [SeitenAnzahl] Seiten.")
             return
         
+        ## CSDATING
         elif command == "cs":
-            await planner.exec(self,message)
+            params = message.content.split(" ")[1:]
+            if len(params) == 0 or str(params[0]) == "help" or len(params) == 1:
+                await roulette.sendhelp(self,message)
+                return
+            await csdating.datevoted(self,message,int(params[1]),int(params[2]))
             return
 
         ##### COIN FLIP
