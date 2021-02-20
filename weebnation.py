@@ -60,18 +60,18 @@ class weebnation():
     async def listAnimes(self, message):
         cmd = "SELECT aTitle, aLink, aTags FROM tblAnime ORDER BY RAND() LIMIT 5"
         result = executeSql(cmd)
+        msg = "🤤: Hier 5 random Animes aus meiner Datenbank:\n"
         for i in range(len(result)):
-            msg = ("%d. %s (%s) [%s]\n" % (i+1, result[i][0],result[i][1],result[i][2]))
-        msg = "🤤: Hier " + i+1 + " random Animes aus meiner Datenbank:\n" + msg
+            msg = msg + "%d. %s (%s) [%s]\n" % (i+1, result[i][0],result[i][1],result[i][2])
         await message.channel.send(msg)
         return
     
     async def showAnimes(self,message):
         await channel.send("😏: Hier ist der Link zum Himmel!")
-        await channel.send(link)
+        await channel.send("hier link")
 
     async def findAnime(self,message):
-        needle = message.content.split(" ")[1]
+        needle = message.content.split(" ")[2]
         if len(needle) <= 2:
             await channel.send("🤔: Geb mir mehr als das...")
             return
