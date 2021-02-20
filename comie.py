@@ -160,12 +160,16 @@ class Comie(discord.Client):
         # weebnation
         elif command == "a":
             try:
-                if message.content.split(" ")[1] != "list":
-                    await weebnation.addAnime(self, message)
+                if message.content.split(" ")[1] == "list":
+                    #LIST 5 random ANIME
+                    await weebnation.listAnimes(self, message)
                 elif message.content.split(" ")[1] == "find":
+                    #FIND ANIME (keyword in tags or name)
+                    print(message.content)
                     await weebnation.findAnime(self, message)
                 else:
-                    await weebnation.listAnimes(self, message)
+                    # no second command 
+                    await weebnation.addAnime(self, message)
             except:
                 await message.channel.send("!a [Name] [Link] [Tag1,Tag2,...]")
             return
