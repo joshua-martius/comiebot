@@ -148,7 +148,7 @@ class Comie(discord.Client):
         elif command == "cs":
             params = message.content.split(" ")[1:]
             if len(params) == 0 or str(params[0]) == "help" or len(params) == 1:
-                await roulette.sendhelp(self,message)
+                await csdating.sendhelp(self,message)
                 return
             await csdating.datevoted(self,message,int(params[1]),int(params[2]))
             return
