@@ -12,7 +12,9 @@ import mysql.connector
 import time
 import json
 from datetime import datetime
+from csdating import csdating
 from weebnation import weebnation
+import requests
 
 config = json.loads(open("./config.json","r").read())
 
@@ -147,6 +149,21 @@ class Comie(discord.Client):
                 return
             return
 
+        elif command == "watch":
+            params = message.content.split(" ")
+            load = { 
+                "w2g_api_key" : config["watchtogether"]["apikey"]
+            }
+            if len(params) != 1:
+                load["share"] = params[-1]
+            r = requests.post("https://w2g.tv/rooms/create.json", load)
+            if r.status_code == 200:
+                url = "https://w2g.tv/rooms/" + r.json()["streamkey"]
+                await message.channel.send(url + " ist euer Watch2gether Raum. Viel Spaß! 🤗")
+            else:
+                print("ERROR in watch2gether api response")
+            return
+
         ##### IMGUR
         elif command == "img":
             await message.channel.send("Hier kommt ein zufälliges Bild für dich %s ~(^__^)~" % (mentionUser(message.author)))
@@ -182,8 +199,13 @@ class Comie(discord.Client):
             await self.sendHelp(message.channel, message.author)
             return
         
+        ## CSDATING
         elif command == "cs":
-            await planner.exec(self,message)
+            params = message.content.split(" ")[1:]
+            if len(params) == 0 or str(params[0]) == "help" or len(params) == 1:
+                await csdating.sendhelp(self,message)
+                return
+            await csdating.datevote(self,message,int(params[0]),int(params[1]))
             return
 
         ##### COIN FLIP

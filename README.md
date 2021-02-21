@@ -18,6 +18,10 @@ Sends the time since the bot has started into the current channel.
 Flips a coin
 ### Dice
 Throws a dice, see !help for usage.
+### CSDating
+Want to know when your friends got time for CSGO? Make Comie ask them for you.
+### Watch2Gether
+Create watch2gether rooms with a preloaded video
 ### Weebnation
 Share a list of series you would recommend to your friends
 
@@ -43,6 +47,10 @@ A local config.json has to exist in the following form:
     {
         "rolename": "",
 	"organizer": ""
+    },
+    "watchtogether":
+    {
+        "apikey": ""
     }
 }
 ```
