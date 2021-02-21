@@ -150,7 +150,7 @@ class Comie(discord.Client):
             if len(params) == 0 or str(params[0]) == "help" or len(params) == 1:
                 await csdating.sendhelp(self,message)
                 return
-            await csdating.datevoted(self,message,int(params[1]),int(params[2]))
+            await csdating.datevote(self,message,int(params[0]),int(params[1]))
             return
 
         ##### COIN FLIP
