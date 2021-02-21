@@ -67,3 +67,5 @@ A local config.json has to exist in the following form:
 
 ### Database
 - MySQL
+
+Hello World :)
