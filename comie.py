@@ -13,6 +13,7 @@ import time
 import json
 from datetime import datetime
 from weebnation import weebnation
+import requests
 
 config = json.loads(open("./config.json","r").read())
 
@@ -145,6 +146,21 @@ class Comie(discord.Client):
                     return
                 await roulette.play(self, message)
                 return
+            return
+
+        elif command == "watch":
+            params = message.content.split(" ")
+            load = { 
+                "w2g_api_key" : config["watchtogether"]["apikey"]
+            }
+            if len(params) != 1:
+                load["share"] = params[-1]
+            r = requests.post("https://w2g.tv/rooms/create.json", load)
+            if r.status_code == 200:
+                url = "https://w2g.tv/rooms/" + r.json()["streamkey"]
+                await message.channel.send(url + " ist euer Watch2gether Raum. Viel Spaß! 🤗")
+            else:
+                print("ERROR in watch2gether api response")
             return
 
         ##### IMGUR
