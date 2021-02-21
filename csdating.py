@@ -10,6 +10,7 @@ class csdating():
         for i in range(start_time,end_time + 1):
             message = await message.channel.send(str(i) + " Uhr")
             await message.add_reaction('👎🏻')
+            await message.add_reaction('✋🏻')
             await message.add_reaction('👍🏻')
 
     async  def sendhelp(self,message):
