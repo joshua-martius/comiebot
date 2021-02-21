@@ -40,7 +40,7 @@ A local config.json has to exist in the following form:
     "secretsanta":
     {
         "rolename": "",
-	    "organizer": ""
+	"organizer": ""
     }
 }
 ```

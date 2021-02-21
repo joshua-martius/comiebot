@@ -12,6 +12,7 @@ import mysql.connector
 import time
 import json
 from datetime import datetime
+from weebnation import weebnation
 
 config = json.loads(open("./config.json","r").read())
 
@@ -38,9 +39,6 @@ def executeSql(cmd):
         mydb.commit()
         mydb.close()
         return
-
-config = json.loads(open("./config.json","r").read())
-
 
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
@@ -184,6 +182,10 @@ class Comie(discord.Client):
             await self.sendHelp(message.channel, message.author)
             return
         
+        elif command == "cs":
+            await planner.exec(self,message)
+            return
+
         ##### COIN FLIP
         elif command == "coinflip":
             await coinflip.flip(message)
@@ -191,6 +193,23 @@ class Comie(discord.Client):
 
         elif command == "w":
             await dice.exec(self,message)
+            return
+
+        # weebnation
+        elif command == "a":
+            try:
+                if message.content.split(" ")[1] == "list":
+                    #LIST 5 random ANIME
+                    await weebnation.listAnimes(self, message)
+                elif message.content.split(" ")[1] == "find":
+                    #FIND ANIME (keyword in tags or name)
+                    print(message.content)
+                    await weebnation.findAnime(self, message)
+                else:
+                    # no second command 
+                    await weebnation.addAnime(self, message)
+            except:
+                await message.channel.send("!a [Name] [Link] [Tag1,Tag2,...]")
             return
 
         ##### UNKNOWN COMMAND
