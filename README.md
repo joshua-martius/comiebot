@@ -22,6 +22,8 @@ Throws a dice, see !help for usage.
 Want to know when your friends got time for CSGO? Make Comie ask them for you.
 ### Watch2Gether
 Create watch2gether rooms with a preloaded video
+### Weebnation
+Share a list of series you would recommend to your friends
 
 ## Configuration
 A local config.json has to exist in the following form:
