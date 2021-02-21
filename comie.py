@@ -12,7 +12,6 @@ import mysql.connector
 import time
 import json
 from datetime import datetime
-from planner import planner
 from weebnation import weebnation
 
 config = json.loads(open("./config.json","r").read())
