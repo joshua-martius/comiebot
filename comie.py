@@ -12,6 +12,7 @@ import mysql.connector
 import time
 import json
 from datetime import datetime
+from csdating import csdating
 from weebnation import weebnation
 import requests
 
@@ -198,8 +199,13 @@ class Comie(discord.Client):
             await self.sendHelp(message.channel, message.author)
             return
         
+        ## CSDATING
         elif command == "cs":
-            await planner.exec(self,message)
+            params = message.content.split(" ")[1:]
+            if len(params) == 0 or str(params[0]) == "help" or len(params) == 1:
+                await csdating.sendhelp(self,message)
+                return
+            await csdating.datevote(self,message,int(params[0]),int(params[1]))
             return
 
         ##### COIN FLIP
