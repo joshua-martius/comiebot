@@ -16,6 +16,30 @@ from weebnation import weebnation
 
 config = json.loads(open("./config.json","r").read())
 
+mydb = mysql.connector.connect(
+  host=config["db"]["host"],
+  user=config["db"]["user"],
+  password=config["db"]["password"],
+  database=config["db"]["name"]
+)
+
+sql = mydb.cursor()
+
+def executeSql(cmd):
+    mydb.connect()
+    print("Executing: " + cmd)
+    if cmd.startswith("SELECT"):
+        sql.execute(cmd)
+        result = sql.fetchall()
+        mydb.close()
+        return result
+    else:
+        # insert, update or delete
+        sql.execute(cmd)
+        mydb.commit()
+        mydb.close()
+        return
+
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
 
@@ -44,6 +68,21 @@ class Comie(discord.Client):
         print("Bot is up and running.")
         global startdate
         startdate = datetime.utcnow()
+        return
+
+    async def on_member_join(self, member):
+        await self.sendHelp(member, member)
+        cmd = "INSERT INTO tblUser(uName, uID) VALUES ('%s','%s')" % (str(member), member.id)
+        result = executeSql(cmd)
+        return
+
+    async def on_member_remove(self, member):
+        cmd = "DELETE FROM tblUser WHERE uName = '%s' AND uID = '%s'" % (str(member), member.id)
+        result = executeSql(cmd)
+        return
+
+    async def sendHelp(self, channel, requester):
+        await channel.send("Hi " + mentionUser(requester) + "!\nIch kann folgende Befehle bearbeiten:\n!help - Zeigt diese Hilfe an\n!img - Schickt ein zufälliges Bild in den aktuellen Channel (Upvote: 👍 | Downvote: 👀)\n!roulette (!r) - Spielt Roulette\n!wichteln - Startet eine Wichtelpaar Auslosung\n!joke - Erzählt einen Witz\n!bugs - Gibt alle bekannten Fehler aus\n!coinflip - Wirft eine Münze\n!w [SeitenAnzahl] [WüfelAnzahl] - Wirft [WürfelAnzahl=1] Würfel mit [SeitenAnzahl] Seiten.")
         return
     
     async def on_message(self, message):
@@ -140,7 +179,7 @@ class Comie(discord.Client):
 
         ##### SELF HELP
         elif command == "help":
-            await message.channel.send("Hi " + mentionUser(message.author) + "!\nIch kann folgende Befehle bearbeiten:\n!help - Zeigt diese Hilfe an\n!img - Schickt ein zufälliges Bild in den aktuellen Channel (Upvote: 👍 | Downvote: 👀)\n!roulette (!r) - Spielt Roulette\n!wichteln - Startet eine Wichtelpaar Auslosung\n!joke - Erzählt einen Witz\n!bugs - Gibt alle bekannten Fehler aus\n!coinflip - Wirft eine Münze\n!w [SeitenAnzahl] [WüfelAnzahl] - Wirft [WürfelAnzahl=1] Würfel mit [SeitenAnzahl] Seiten.")
+            await self.sendHelp(message.channel, message.author)
             return
         
         elif command == "cs":
