@@ -18,6 +18,8 @@ Sends the time since the bot has started into the current channel.
 Flips a coin
 ### Dice
 Throws a dice, see !help for usage.
+### Weebnation
+Share a list of series you would recommend to your friends
 
 ## Configuration
 A local config.json has to exist in the following form:
