@@ -68,4 +68,4 @@ A local config.json has to exist in the following form:
 ### Database
 - MySQL
 
-Hello World, again and again :)
+Hello World, again and again and again :)
