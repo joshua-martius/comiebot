@@ -18,6 +18,8 @@ Sends the time since the bot has started into the current channel.
 Flips a coin
 ### Dice
 Throws a dice, see !help for usage.
+### Watch2Gether
+Create watch2gether rooms with a preloaded video
 
 ## Configuration
 A local config.json has to exist in the following form:
@@ -41,6 +43,10 @@ A local config.json has to exist in the following form:
     {
         "rolename": "",
 	"organizer": ""
+    },
+    "watchtogether":
+    {
+        "apikey": ""
     }
 }
 ```
