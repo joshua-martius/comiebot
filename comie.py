@@ -84,7 +84,20 @@ class Comie(discord.Client):
         return
 
     async def sendHelp(self, channel, requester):
-        await channel.send("Hi " + mentionUser(requester) + "!\nIch kann folgende Befehle bearbeiten:\n!help - Zeigt diese Hilfe an\n!img - Schickt ein zufälliges Bild in den aktuellen Channel (Upvote: 👍 | Downvote: 👀)\n!roulette (!r) - Spielt Roulette\n!wichteln - Startet eine Wichtelpaar Auslosung\n!joke - Erzählt einen Witz\n!bugs - Gibt alle bekannten Fehler aus\n!coinflip - Wirft eine Münze\n!w [SeitenAnzahl] [WüfelAnzahl] - Wirft [WürfelAnzahl=1] Würfel mit [SeitenAnzahl] Seiten.")
+        msg = ("Hi " + mentionUser(requester))
+        msg = msg + "\nIch kann folgende Befehle bearbeiten:"
+        msg = msg + "\n!help - Zeigt diese Hilfe an" 
+        msg = msg + "\n!img - Schickt ein zufälliges Bild in den aktuellen Channel (Upvote: 👍 | Downvote: 👀)"
+        msg = msg + "\n!roulette (!r) - Spielt Roulette"
+        msg = msg + "\n!wichteln - Startet eine Wichtelpaar Auslosung"
+        msg = msg + "\n!joke - Erzählt einen Witz"
+        msg = msg + "\n!bugs - Gibt alle bekannten Fehler aus"
+        msg = msg + "\n!coinflip - Wirft eine Münze"
+        msg = msg + "\n!w [SeitenAnzahl] [WüfelAnzahl] - Wirft [WürfelAnzahl=1] Würfel mit [SeitenAnzahl] Seiten."
+        msg = msg + "\n!a [Anime Name] [Streaming Link] [Tag1, Tag2, Tag3,...]- Fügt einen Anime zur Weebnation hinzu."
+        msg = msg + "\n!w [Link]- Erstellt einen Watch2gether Link mit dem gewünschten Video."
+        await channel.send(msg)
+
         return
     
     async def on_message(self, message):
