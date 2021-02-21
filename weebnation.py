@@ -37,30 +37,51 @@ class weebnation():
         link = [i for i in params if i.startswith('https://')][0]
         linkIndex = params.index(link)
         name = ' '.join(params[0:linkIndex])
-        tags = ''.join(params[linkIndex+1:])
-        if name == None or link == None or tags == None:
+        taglist = message.content.split(',')[0:]         # new split at comma
+        taglist[0] = taglist[0].split(' ')[-1]      # delete the command, title and link
+        tags = ''
+        for i in range(len(taglist)):
+            tags = tags + taglist[i].strip() + ', ' # strip the whitespaces 
+        tags = tags[:-2]                            # delete the last 2 characters (comma and space
+        if name == "" or link == "" or tags == "":
             await channel.send("Du musst den Namen, einen Link und mindestens einen Tag angeben!🤷🏼‍♂️")
             return
         else:
             cmd = "SELECT aTitle,aLink FROM tblAnime WHERE aTitle = '%s' OR aLink = '%s'" % (name, link)
             result = executeSql(cmd)
-            if result == None:
-                 await channel.send("Der Anime ist bereits in der Weeb-Datenbank!🤷🏼‍♂️")
-                 return
+            if len(result) > 0:
+                 await message.channel.send("Der Anime ist bereits in der Weeb-Datenbank!🤷🏼‍♂️")
             else:
                 cmd = "INSERT INTO tblAnime(aTitle, aLink, aCreator, aTags) VALUES ('%s','%s','%s','%s')" % (name, link, message.author.id, tags)
                 executeSql(cmd)
                 await message.channel.send("Ich habe %s der Weeb-Datenbank hinzugefügt." % (name))
+            return
 
     async def listAnimes(self, message):
         cmd = "SELECT aTitle, aLink, aTags FROM tblAnime ORDER BY RAND() LIMIT 5"
         result = executeSql(cmd)
         msg = "Hier 5 random Animes aus meiner Datenbank:\n"
         for i in range(len(result)):
-            msg = msg + ("%d. %s (%s) [%s]\n" % (i+1, result[i][0],result[i][1],result[i][2]))
+            msg = msg + "%d. %s (%s) [%s]\n" % (i+1, result[i][0],result[i][1],result[i][2])
         await message.channel.send(msg)
         return
-    
-    async def showAnimes(self,message):
-        await channel.send("Hier ist der Link zum Himmel!")
-        await channel.send(link)
+
+    async def findAnime(self,message):
+        needle = message.content.split(" ")[2]
+        if len(needle) <= 2:
+            await channel.send("🤔: Geb mir mehr als das...")
+            return
+        elif len(needle) >= 32:
+            await channel.send("😵: Das ist mir leider zu viel...")
+            return
+        else:
+            cmd = 'SELECT aTitle,aLink FROM tblAnime WHERE aTags LIKE \'%' + needle + '%\' OR aTitle LIKE \'%' + needle + '%\''
+            result = executeSql(cmd)
+            if result == None:
+                await channel.send("🤕: Sorry, ich habe für dich gekämpft, aber ich habe keine Anime mit diesem Tag oder Titel gefunden...🏳️")
+                return
+            else:
+                msg = "😁: Ich habe folgende Anime gefunden:\n"
+                for i in range(len(result)):
+                    msg = msg + ("%d. %s (%s) [%s]\n" % (i+1, result[i][0],result[i][1],result[i][2]))
+                await message.channel.send(msg)

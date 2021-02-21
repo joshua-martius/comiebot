@@ -20,6 +20,8 @@ Flips a coin
 Throws a dice, see !help for usage.
 ### CSDating
 Want to know when your friends got time for CSGO? Make Comie ask them for you.
+### Watch2Gether
+Create watch2gether rooms with a preloaded video
 
 ## Configuration
 A local config.json has to exist in the following form:
@@ -42,7 +44,11 @@ A local config.json has to exist in the following form:
     "secretsanta":
     {
         "rolename": "",
-	    "organizer": ""
+	"organizer": ""
+    },
+    "watchtogether":
+    {
+        "apikey": ""
     }
 }
 ```

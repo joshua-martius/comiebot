@@ -14,8 +14,33 @@ import json
 from datetime import datetime
 from csdating import csdating
 from weebnation import weebnation
+import requests
 
 config = json.loads(open("./config.json","r").read())
+
+mydb = mysql.connector.connect(
+  host=config["db"]["host"],
+  user=config["db"]["user"],
+  password=config["db"]["password"],
+  database=config["db"]["name"]
+)
+
+sql = mydb.cursor()
+
+def executeSql(cmd):
+    mydb.connect()
+    print("Executing: " + cmd)
+    if cmd.startswith("SELECT"):
+        sql.execute(cmd)
+        result = sql.fetchall()
+        mydb.close()
+        return result
+    else:
+        # insert, update or delete
+        sql.execute(cmd)
+        mydb.commit()
+        mydb.close()
+        return
 
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
@@ -45,6 +70,21 @@ class Comie(discord.Client):
         print("Bot is up and running.")
         global startdate
         startdate = datetime.utcnow()
+        return
+
+    async def on_member_join(self, member):
+        await self.sendHelp(member, member)
+        cmd = "INSERT INTO tblUser(uName, uID) VALUES ('%s','%s')" % (str(member), member.id)
+        result = executeSql(cmd)
+        return
+
+    async def on_member_remove(self, member):
+        cmd = "DELETE FROM tblUser WHERE uName = '%s' AND uID = '%s'" % (str(member), member.id)
+        result = executeSql(cmd)
+        return
+
+    async def sendHelp(self, channel, requester):
+        await channel.send("Hi " + mentionUser(requester) + "!\nIch kann folgende Befehle bearbeiten:\n!help - Zeigt diese Hilfe an\n!img - Schickt ein zufälliges Bild in den aktuellen Channel (Upvote: 👍 | Downvote: 👀)\n!roulette (!r) - Spielt Roulette\n!wichteln - Startet eine Wichtelpaar Auslosung\n!joke - Erzählt einen Witz\n!bugs - Gibt alle bekannten Fehler aus\n!coinflip - Wirft eine Münze\n!w [SeitenAnzahl] [WüfelAnzahl] - Wirft [WürfelAnzahl=1] Würfel mit [SeitenAnzahl] Seiten.")
         return
     
     async def on_message(self, message):
@@ -109,6 +149,21 @@ class Comie(discord.Client):
                 return
             return
 
+        elif command == "watch":
+            params = message.content.split(" ")
+            load = { 
+                "w2g_api_key" : config["watchtogether"]["apikey"]
+            }
+            if len(params) != 1:
+                load["share"] = params[-1]
+            r = requests.post("https://w2g.tv/rooms/create.json", load)
+            if r.status_code == 200:
+                url = "https://w2g.tv/rooms/" + r.json()["streamkey"]
+                await message.channel.send(url + " ist euer Watch2gether Raum. Viel Spaß! 🤗")
+            else:
+                print("ERROR in watch2gether api response")
+            return
+
         ##### IMGUR
         elif command == "img":
             await message.channel.send("Hier kommt ein zufälliges Bild für dich %s ~(^__^)~" % (mentionUser(message.author)))
@@ -141,7 +196,7 @@ class Comie(discord.Client):
 
         ##### SELF HELP
         elif command == "help":
-            await message.channel.send("Hi " + mentionUser(message.author) + "!\nIch kann folgende Befehle bearbeiten:\n!help - Zeigt diese Hilfe an\n!img - Schickt ein zufälliges Bild in den aktuellen Channel (Upvote: 👍 | Downvote: 👀)\n!roulette (!r) - Spielt Roulette\n!wichteln - Startet eine Wichtelpaar Auslosung\n!joke - Erzählt einen Witz\n!bugs - Gibt alle bekannten Fehler aus\n!coinflip - Wirft eine Münze\n!w [SeitenAnzahl] [WüfelAnzahl] - Wirft [WürfelAnzahl=1] Würfel mit [SeitenAnzahl] Seiten.")
+            await self.sendHelp(message.channel, message.author)
             return
         
         ## CSDATING
@@ -165,10 +220,16 @@ class Comie(discord.Client):
         # weebnation
         elif command == "a":
             try:
-                if message.content.split(" ")[1] != "list":
-                    await weebnation.addAnime(self, message)
-                else:
+                if message.content.split(" ")[1] == "list":
+                    #LIST 5 random ANIME
                     await weebnation.listAnimes(self, message)
+                elif message.content.split(" ")[1] == "find":
+                    #FIND ANIME (keyword in tags or name)
+                    print(message.content)
+                    await weebnation.findAnime(self, message)
+                else:
+                    # no second command 
+                    await weebnation.addAnime(self, message)
             except:
                 await message.channel.send("!a [Name] [Link] [Tag1,Tag2,...]")
             return
