@@ -54,6 +54,8 @@ class weebnation():
             else:
                 cmd = "INSERT INTO tblAnime(aTitle, aLink, aCreator, aTags) VALUES ('%s','%s','%s','%s')" % (name, link, message.author.id, tags)
                 executeSql(cmd)
+                cmd = "UPDATE tblUser SET uChips = uChips + 500 WHERE uID = '%s'" % (message.author.id)
+                executeSql(cmd)
                 await message.channel.send("Ich habe %s der Weeb-Datenbank hinzugefügt." % (name))
             return
 
