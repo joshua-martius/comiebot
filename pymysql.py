@@ -10,7 +10,9 @@ mydb = mysql.connector.connect(
   database=config["db"]["name"]
 )
 
+
 sql = mydb.cursor()
+
 
 def executeSql(self, cmd):
     mydb.connect()

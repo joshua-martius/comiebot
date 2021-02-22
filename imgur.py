@@ -14,7 +14,6 @@ images = []
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
 
-
 class imgur():
 
     async def postImage(self, message, author):
