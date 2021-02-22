@@ -9,9 +9,8 @@ class csdating():
         await message.channel.send("%s möchte heute CS:GO spielen @everyone, wann habt ihr Zeit?" % (mentionUser(message.author)))
         for i in range(start_time,end_time + 1):
             message = await message.channel.send(str(i) + " Uhr")
-            await message.add_reaction('👍🏻')
             await message.add_reaction('👎🏻')
-
+            await message.add_reaction('👍🏻')
 
     async  def sendhelp(self,message):
         msg = "*So benutzt du CSDating:*"
