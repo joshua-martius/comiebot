@@ -8,7 +8,7 @@ from coinflip import coinflip
 from git import git
 from roulette import roulette
 from dice import dice
-import mysql.connector
+import pymysql
 import time
 import json
 from datetime import datetime
@@ -17,30 +17,6 @@ from weebnation import weebnation
 import requests
 
 config = json.loads(open("./config.json","r").read())
-
-mydb = mysql.connector.connect(
-  host=config["db"]["host"],
-  user=config["db"]["user"],
-  password=config["db"]["password"],
-  database=config["db"]["name"]
-)
-
-sql = mydb.cursor()
-
-def executeSql(cmd):
-    mydb.connect()
-    print("Executing: " + cmd)
-    if cmd.startswith("SELECT"):
-        sql.execute(cmd)
-        result = sql.fetchall()
-        mydb.close()
-        return result
-    else:
-        # insert, update or delete
-        sql.execute(cmd)
-        mydb.commit()
-        mydb.close()
-        return
 
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
@@ -75,12 +51,12 @@ class Comie(discord.Client):
     async def on_member_join(self, member):
         await self.sendHelp(member, member)
         cmd = "INSERT INTO tblUser(uName, uID) VALUES ('%s','%s')" % (str(member), member.id)
-        result = executeSql(cmd)
+        result = pymysql.executeSql(cmd)
         return
 
     async def on_member_remove(self, member):
         cmd = "DELETE FROM tblUser WHERE uName = '%s' AND uID = '%s'" % (str(member), member.id)
-        result = executeSql(cmd)
+        result = pymysql.executeSql(cmd)
         return
 
     async def sendHelp(self, channel, requester):
