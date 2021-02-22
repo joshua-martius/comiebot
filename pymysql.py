@@ -12,7 +12,6 @@ mydb = mysql.connector.connect(
 
 sql = mydb.cursor()
 
-
 def executeSql(self, cmd):
     mydb.connect()
     print("Executing: " + cmd)
