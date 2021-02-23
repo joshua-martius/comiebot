@@ -4,7 +4,7 @@ import random
 import string
 import urllib.request
 from PIL import Image
-import mysql.connector
+import pymysql
 import json
 
 config = json.loads(open("./config.json","r").read())
@@ -13,31 +13,6 @@ images = []
 
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
-
-mydb = mysql.connector.connect(
-  host=config["db"]["host"],
-  user=config["db"]["user"],
-  password=config["db"]["password"],
-  database=config["db"]["name"]
-)
-
-
-sql = mydb.cursor()
-
-def executeSql(cmd):
-    mydb.connect()
-    print("Executing: " + cmd)
-    if cmd.startswith("SELECT"):
-        sql.execute(cmd)
-        result = sql.fetchall()
-        mydb.close()
-        return result
-    else:
-        # insert, update or delete
-        sql.execute(cmd)
-        mydb.commit()
-        mydb.close()
-        return
 
 class imgur():
 
@@ -72,12 +47,12 @@ class imgur():
 
         # add image to voting table
         cmd = "INSERT INTO tblVoting(vMessage, vAuthor) VALUES ('%s','%s')" % (message.id, author.id)
-        executeSql(cmd)
+        pymysql.executeSql(cmd)
         return
 
     async def postResults(self, channel):
         cmd = "SELECT vMessage,vVotes,vAuthor FROM tblVoting WHERE vVotes = (SELECT MAX(vVotes) FROM tblVoting) LIMIT 1"
-        result = executeSql(cmd)
+        result = pymysql.executeSql(cmd)
         return [result[0][0],result[0][1], result[0][2]]
 
     ## ToDo: clean up this mess
@@ -87,33 +62,33 @@ class imgur():
         if payload.emoji.name == "👀":
             if removal:
                 cmd = "UPDATE tblVoting SET vVotes = vVotes + 1 WHERE vMessage = '%s'" % (imgid)
-                executeSql(cmd)
+                pymysql.executeSql(cmd)
                 return
             cmd = "UPDATE tblVoting SET vVotes = vVotes - 1 WHERE vMessage = '%s'" % (imgid)
-            executeSql(cmd)
+            pymysql.executeSqlSql(cmd)
             cmd = "SELECT vVotes,vAuthor FROM tblVoting WHERE vMessage = '%s'" % (imgid)
-            result = executeSql(cmd)
+            result = pymysql.executeSql(cmd)
             if int(result[0][0]) <= -3:
                 author = await self.fetch_user(result[0][1])
                 #message = await self.fetch_message(imgid)
                 await self.http.delete_message(payload.channel_id, payload.message_id) # delete image with a score of -3 or lower!
                 await channel.send("Ich habe ein Bild von %s verschwinden lassen! 🤭" % (mentionUser(author)))
                 cmd = "DELETE FROM tblVoting WHERE vMessage = '%s'" % (payload.message_id)
-                executeSql(cmd)
+                pymysql.executeSql(cmd)
         else:
             if removal:
                 cmd = "UPDATE tblVoting SET vVotes = vVotes - 1 WHERE vMessage = '%s'" % (imgid)
-                executeSql(cmd)
+                pymysql.executeSql(cmd)
                 cmd = "SELECT vVotes,vAuthor FROM tblVoting WHERE vMessage = '%s'" % (payload.message_id)
-                result = executeSql(cmd)
+                result = pymysql.executeSql(cmd)
                 if int(result[0][0]) <= -3:
                     author = await self.fetch_user(result[0][1])
                     await self.http.delete_message(payload.channel_id, payload.message_id) # delete image with a score of -3 or lower
                     await channel.send("Ich habe ein Bild von %s verschwinden lassen! 🤭" % (mentionUser(author)))
                     cmd = "DELETE FROM tblVoting WHERE vMessage = '%s'" % (payload.message_id)
-                    executeSql(cmd)
+                    pymysql.executeSql(cmd)
                 return
             
             cmd = "UPDATE tblVoting SET vVotes = vVotes + 1 WHERE vMessage = '%s'" % (imgid)
-            executeSql(cmd)
+            pymysql.executeSql(cmd)
         return

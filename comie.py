@@ -8,7 +8,7 @@ from coinflip import coinflip
 from git import git
 from roulette import roulette
 from dice import dice
-import mysql.connector
+import pymysql
 import time
 import json
 from datetime import datetime
@@ -17,30 +17,6 @@ from weebnation import weebnation
 import requests
 
 config = json.loads(open("./config.json","r").read())
-
-mydb = mysql.connector.connect(
-  host=config["db"]["host"],
-  user=config["db"]["user"],
-  password=config["db"]["password"],
-  database=config["db"]["name"]
-)
-
-sql = mydb.cursor()
-
-def executeSql(cmd):
-    mydb.connect()
-    print("Executing: " + cmd)
-    if cmd.startswith("SELECT"):
-        sql.execute(cmd)
-        result = sql.fetchall()
-        mydb.close()
-        return result
-    else:
-        # insert, update or delete
-        sql.execute(cmd)
-        mydb.commit()
-        mydb.close()
-        return
 
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
@@ -75,16 +51,29 @@ class Comie(discord.Client):
     async def on_member_join(self, member):
         await self.sendHelp(member, member)
         cmd = "INSERT INTO tblUser(uName, uID) VALUES ('%s','%s')" % (str(member), member.id)
-        result = executeSql(cmd)
+        result = pymysql.executeSql(cmd)
         return
 
     async def on_member_remove(self, member):
         cmd = "DELETE FROM tblUser WHERE uName = '%s' AND uID = '%s'" % (str(member), member.id)
-        result = executeSql(cmd)
+        result = pymysql.executeSql(cmd)
         return
 
     async def sendHelp(self, channel, requester):
-        await channel.send("Hi " + mentionUser(requester) + "!\nIch kann folgende Befehle bearbeiten:\n!help - Zeigt diese Hilfe an\n!img - Schickt ein zufälliges Bild in den aktuellen Channel (Upvote: 👍 | Downvote: 👀)\n!roulette (!r) - Spielt Roulette\n!wichteln - Startet eine Wichtelpaar Auslosung\n!joke - Erzählt einen Witz\n!bugs - Gibt alle bekannten Fehler aus\n!coinflip - Wirft eine Münze\n!w [SeitenAnzahl] [WüfelAnzahl] - Wirft [WürfelAnzahl=1] Würfel mit [SeitenAnzahl] Seiten.")
+        msg = ("Hi " + mentionUser(requester))
+        msg = msg + "\nIch kann folgende Befehle bearbeiten:"
+        msg = msg + "\n!help - Zeigt diese Hilfe an" 
+        msg = msg + "\n!img - Schickt ein zufälliges Bild in den aktuellen Channel (Upvote: 👍 | Downvote: 👀)"
+        msg = msg + "\n!roulette (!r) - Spielt Roulette"
+        msg = msg + "\n!wichteln - Startet eine Wichtelpaar Auslosung"
+        msg = msg + "\n!joke - Erzählt einen Witz"
+        msg = msg + "\n!bugs - Gibt alle bekannten Fehler aus"
+        msg = msg + "\n!coinflip - Wirft eine Münze"
+        msg = msg + "\n!w [SeitenAnzahl] [WüfelAnzahl] - Wirft [WürfelAnzahl=1] Würfel mit [SeitenAnzahl] Seiten."
+        msg = msg + "\n!a [Anime Name] [Streaming Link] [Tag1, Tag2, Tag3,...]- Fügt einen Anime zur Weebnation hinzu."
+        msg = msg + "\n!w [Link]- Erstellt einen Watch2gether Link mit dem gewünschten Video."
+        await channel.send(msg)
+
         return
     
     async def on_message(self, message):
