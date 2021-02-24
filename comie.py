@@ -13,6 +13,7 @@ import time
 import json
 from datetime import datetime
 from csdating import csdating
+from rolehandler import rolehandler
 from weebnation import weebnation
 import requests
 
@@ -24,6 +25,10 @@ def mentionUser(user):
 class Comie(discord.Client):
     ### REACIONS
     async def on_raw_reaction_add(self, payload):
+        if str(payload.message_id) == config["roles"]["reactionMessage"]:
+            await rolehandler.reactionAdded(self, payload.user_id, payload.emoji, payload.message_id)
+            return
+
         if payload.emoji.name != "👍" and payload.emoji.name != "👀":
             return
         
@@ -33,6 +38,10 @@ class Comie(discord.Client):
         return
 
     async def on_raw_reaction_remove(self, payload):
+        if str(payload.message_id) == config["roles"]["reactionMessage"]:
+            await rolehandler.reactionRemoved(self, payload.user_id, payload.emoji, payload.message_id)
+            return
+
         if payload.emoji.name != "👍" and payload.emoji.name != "👀":
             return
         
@@ -46,6 +55,7 @@ class Comie(discord.Client):
         print("Bot is up and running.")
         global startdate
         startdate = datetime.utcnow()
+        await rolehandler.init(self)
         return
 
     async def on_member_join(self, member):
