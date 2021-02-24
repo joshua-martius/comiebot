@@ -25,6 +25,8 @@ def mentionUser(user):
 class Comie(discord.Client):
     ### REACIONS
     async def on_raw_reaction_add(self, payload):
+        if str(payload.member) == "Comie#1396":
+            return
         if str(payload.message_id) == config["roles"]["reactionMessage"]:
             await rolehandler.reactionAdded(self, payload.user_id, payload.emoji, payload.message_id)
             return
@@ -38,6 +40,8 @@ class Comie(discord.Client):
         return
 
     async def on_raw_reaction_remove(self, payload):
+        if str(payload.member) == "Comie#1396":
+            return
         if str(payload.message_id) == config["roles"]["reactionMessage"]:
             await rolehandler.reactionRemoved(self, payload.user_id, payload.emoji, payload.message_id)
             return
