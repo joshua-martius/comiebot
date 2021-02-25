@@ -85,7 +85,7 @@ class Comie(discord.Client):
         msg = msg + "\n!coinflip - Wirft eine Münze"
         msg = msg + "\n!w [SeitenAnzahl] [WüfelAnzahl] - Wirft [WürfelAnzahl=1] Würfel mit [SeitenAnzahl] Seiten."
         msg = msg + "\n!a [Anime Name] [Streaming Link] [Tag1, Tag2, Tag3,...]- Fügt einen Anime zur Weebnation hinzu."
-        msg = msg + "\n!w [Link]- Erstellt einen Watch2gether Link mit dem gewünschten Video."
+        msg = msg + "\n!watch [Link]- Erstellt einen Watch2gether Link mit dem gewünschten Video."
         await channel.send(msg)
 
         return
