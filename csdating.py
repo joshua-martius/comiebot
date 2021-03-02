@@ -32,7 +32,7 @@ class csdating():
         #iterate over the reaction
         for reaction in message.reactions:
             #Full team accepted. (6 because of the Bot)
-            if reaction.emoji == "✅" and reaction.count == config["csgo"]["teamSize"]:
+            if reaction.emoji == "✅" and reaction.count == 6:
                 #Create a list of the users that reacted to the message
                 users = await reaction.users().flatten()
                 #iterate over the users
