@@ -27,14 +27,15 @@ class csdating():
         message = self.fetch_message(payload.message_id)
         #asking for 6 reactions(Bot reaction)
         if len(users) == 6:
-            msg = ("Hi **%s!**\n" % mentionUser(user))
-            msg = msg +("Du hast ein Date um **%s**\n mit:" % (message))
-            #call every user 
             for user in users:
-                #skipping Rias(sadly(pls be real:( )))
-                if user == "Rias":
-                    continue
-                msg = msg +("%s" % (user))
-            await user.send(msg)
-            return
+                msg = ("Hi **%s!**\n" % mentionUser(user))
+                msg = msg +("Du hast ein Date um **%s**\n mit:" % (message))
+                #call every user 
+                for friend in users:
+                    #skipping Rias(sadly(pls be real:( )))
+                    if friend == "Rias" or friend == user:
+                        continue
+                    msg = msg +("%s" % (friend))
+                await user.send(msg)
+                return
         return

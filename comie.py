@@ -24,11 +24,10 @@ def mentionUser(user):
 class Comie(discord.Client):
     ### REACIONS
     async def on_raw_reaction_add(self, payload):
-        if payload.guild.name =="CS:GO" :
-             if payload.emoji.name != "👍":
+        if payload.channelid == "813031802204585997":
+            if payload.emoji.name != "👍":
                 return
-            
-             await csdating.reaction(self,payload)
+            await csdating.reaction(self,payload)
         if payload.emoji.name != "👍" and payload.emoji.name != "👀":
             return
         
