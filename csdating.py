@@ -26,13 +26,13 @@ class csdating():
     async def reaction(self,payload):
         #Get the Full message data without the fix channel
         for channel in self.guilds[0].channels:
-            if channel.name == config["csgo"]["channel_name"]:
+            if channel.name == config["csgo"]["channelName"]:
                 message = await channel.fetch_message(payload.message_id)
 
         #iterate over the reaction
         for reaction in message.reactions:
             #Full team accepted. (6 because of the Bot)
-            if reaction.emoji == "✅" and reaction.count == config["csgo"]["fullteam_size"]:
+            if reaction.emoji == "✅" and reaction.count == config["csgo"]["teamSize"]:
                 #Create a list of the users that reacted to the message
                 users = await reaction.users().flatten()
                 #iterate over the users
