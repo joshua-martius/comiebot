@@ -28,7 +28,7 @@ class csdating():
         #get the whole message information
         message = self.fetch_message(payload.message_id)
         #asking for 6 reactions(Bot reaction)
-        if len(users) == 6:
+        if len(users) == 2:
             for user in users:
                 msg = ("Hi **%s!**\n" % mentionUser(user))
                 msg = msg +("Du hast ein Date um **%s**\n mit:" % (message.content))

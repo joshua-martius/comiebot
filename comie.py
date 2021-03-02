@@ -24,6 +24,7 @@ def mentionUser(user):
 class Comie(discord.Client):
     ### REACIONS
     async def on_raw_reaction_add(self, payload):
+        await payload.channel.send("I han reagiert!")
         #The CS-Dating Channel ID so only 6 thumbs-up will start an event in the CS channel
         if payload.channelid == "813031802204585997":
             await payload.channel.send("I han reagiert!")
