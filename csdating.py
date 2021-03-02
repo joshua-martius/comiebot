@@ -1,5 +1,8 @@
 from discord import utils
+import json
 import discord
+
+config = json.loads(open("./config.json","r").read())
 
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
@@ -9,8 +12,8 @@ class csdating():
         await message.channel.send("%s möchte heute CS:GO spielen @everyone, wann habt ihr Zeit?" % (mentionUser(message.author)))
         for i in range(start_time,end_time + 1):
             message = await message.channel.send(str(i) + " Uhr")
-            await message.add_reaction('👎🏻')
-            await message.add_reaction('👍🏻')
+            await message.add_reaction('❌')
+            await message.add_reaction('✅')
 
     async  def sendhelp(self,message):
         msg = "*So benutzt du CSDating:*"
@@ -21,12 +24,15 @@ class csdating():
         
 
     async def reaction(self,payload):
-        #Get the Full message data 
-        message = await self.guilds[0].channels[2].fetch_message(payload.message_id)
+        #Get the Full message data without the fix channel
+        for channel in self.guilds[0].channels:
+            if channel.name == config["csgo"]["channel_name"]:
+                message = await channel.fetch_message(payload.message_id)
+
         #iterate over the reaction
         for reaction in message.reactions:
             #Full team accepted. (6 because of the Bot)
-            if reaction.emoji == "👍🏻" and reaction.count == 6:
+            if reaction.emoji == "✅" and reaction.count == config["csgo"]["fullteam_size"]:
                 #Create a list of the users that reacted to the message
                 users = await reaction.users().flatten()
                 #iterate over the users
@@ -36,9 +42,9 @@ class csdating():
                     #mention the teammates for user
                     for teammate in users:
                         #dont mention the bot and the user himself
-                        if teammate.name == "Rias" or teammate.name == user.name:
+                        if teammate.name == config["discord"]["bot_name"] or teammate.name == user.name:
                             continue
                         msg = msg +("%s \n" % (teammate.name))
                     #send Message to the user
-                    await user.send(msg)
+                await user.send(msg)
         return

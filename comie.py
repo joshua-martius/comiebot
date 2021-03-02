@@ -25,12 +25,13 @@ class Comie(discord.Client):
     ### REACIONS
     async def on_raw_reaction_add(self, payload):
         #The CS-Dating Channel ID so only 6 thumbs-up will start an event in the CS channel
-        if payload.channel_id == 804047115164712990:
+        if payload.channel_id == config["csgo"]["channel_id"]:
             #I dont care about downvotes
-            if payload.emoji.name != "👍":
+            if payload.emoji.name != "✅":
                 return
-            await csdating.reaction(self,payload)
-        if payload.emoji.name != "👍" and payload.emoji.name != "👀":
+            await csdating.reaction(self, payload)
+            
+        payload.emoji.name != "👍" and payload.emoji.name != "👀":
            return
         
         channel = await self.fetch_channel(payload.channel_id)
