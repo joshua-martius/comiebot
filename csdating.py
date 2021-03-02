@@ -21,23 +21,24 @@ class csdating():
         
 
     async def reaction(self,payload):
-        await payload.channel.send("I han reagiert!")
-        # Not quite sure if i understood the doku or handling right:'D Pretty sure that you can build it much smoother/slimmer
-        #getting a list of the users that reacted to the certain message
-        users = await self.reaction.users().flatten()
-        #get the whole message information
-        message = self.fetch_message(payload.message_id)
-        #asking for 6 reactions(Bot reaction)
-        if len(users) == 2:
-            for user in users:
-                msg = ("Hi **%s!**\n" % mentionUser(user))
-                msg = msg +("Du hast ein Date um **%s**\n mit:" % (message.content))
-                #call every user 
-                for friend in users:
-                    #skipping Rias(sadly(pls be real:( )))
-                    if friend == "Rias" or friend == user:
-                        continue
-                    msg = msg +("%s" % (friend))
+        #Get the Full message data 
+        message = await self.guilds[0].channels[2].fetch_message(payload.message_id)
+        #iterate over the reaction
+        for reaction in message.reactions:
+            #Full team accepted. (6 because of the Bot)
+            if reaction.emoji == "👍🏻" and reaction.count == 6:
+                #Create a list of the users that reacted to the message
+                users = await reaction.users().flatten()
+                #iterate over the users
+                for user in users:
+                    msg = ("Hi **%s!**\n" % mentionUser(user))
+                    msg = msg +("Du hast ein Date um **%s** mit:\n" % (message.content))
+                    #mention the teammates for user
+                    for teammate in users:
+                        #dont mention the bot and the user himself
+                        if teammate.name == "Rias" or teammate.name == user.name:
+                            continue
+                        msg = msg +("%s \n" % (teammate.name))
+                    #send Message to the user
                     await user.send(msg)
-                return
         return

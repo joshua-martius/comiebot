@@ -24,23 +24,18 @@ def mentionUser(user):
 class Comie(discord.Client):
     ### REACIONS
     async def on_raw_reaction_add(self, payload):
-        await payload.channel.send("I han reagiert!")
         #The CS-Dating Channel ID so only 6 thumbs-up will start an event in the CS channel
-        if payload.channelid == "813031802204585997":
-            await payload.channel.send("I han reagiert!")
+        if payload.channel_id == 804047115164712990:
             #I dont care about downvotes
             if payload.emoji.name != "👍":
-                await payload.channel.send("I han reagiert!")
                 return
-            #proof for the count of 6 reactions.
-            await payload.channel.send("I han reagiert!")
             await csdating.reaction(self,payload)
-        #if payload.emoji.name != "👍" and payload.emoji.name != "👀":
-         #   return
+        if payload.emoji.name != "👍" and payload.emoji.name != "👀":
+           return
         
-        #channel = await self.fetch_channel(payload.channel_id)
+        channel = await self.fetch_channel(payload.channel_id)
 
-        #await imgur.reaction(self, payload, channel, False)
+        await imgur.reaction(self, payload, channel, False)
         return
 
     async def on_raw_reaction_remove(self, payload):
