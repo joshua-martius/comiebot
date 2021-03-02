@@ -35,12 +35,12 @@ class Comie(discord.Client):
             #proof for the count of 6 reactions.
             await payload.channel.send("I han reagiert!")
             await csdating.reaction(self,payload)
-        if payload.emoji.name != "👍" and payload.emoji.name != "👀":
-            return
+        #if payload.emoji.name != "👍" and payload.emoji.name != "👀":
+         #   return
         
-        channel = await self.fetch_channel(payload.channel_id)
+        #channel = await self.fetch_channel(payload.channel_id)
 
-        await imgur.reaction(self, payload, channel, False)
+        #await imgur.reaction(self, payload, channel, False)
         return
 
     async def on_raw_reaction_remove(self, payload):
