@@ -21,7 +21,9 @@ class csdating():
         
 
     async def reaction(self,payload):
-        #getting a list of the user that reacted to the certain message
+        await payload.channel.send("I han reagiert!")
+        # Not quite sure if i understood the doku or handling right:'D Pretty sure that you can build it much smoother/slimmer
+        #getting a list of the users that reacted to the certain message
         users = await self.reaction.users().flatten()
         #get the whole message information
         message = self.fetch_message(payload.message_id)
@@ -29,13 +31,13 @@ class csdating():
         if len(users) == 6:
             for user in users:
                 msg = ("Hi **%s!**\n" % mentionUser(user))
-                msg = msg +("Du hast ein Date um **%s**\n mit:" % (message))
+                msg = msg +("Du hast ein Date um **%s**\n mit:" % (message.content))
                 #call every user 
                 for friend in users:
                     #skipping Rias(sadly(pls be real:( )))
                     if friend == "Rias" or friend == user:
                         continue
                     msg = msg +("%s" % (friend))
-                await user.send(msg)
+                    await user.send(msg)
                 return
         return
