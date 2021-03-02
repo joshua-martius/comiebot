@@ -13,6 +13,7 @@ import time
 import json
 from datetime import datetime
 from csdating import csdating
+from rolehandler import rolehandler
 from weebnation import weebnation
 import requests
 
@@ -25,7 +26,7 @@ class Comie(discord.Client):
     ### REACIONS
     async def on_raw_reaction_add(self, payload):
         #The CS-Dating Channel ID so only 6 thumbs-up will start an event in the CS channel
-        if payload.channel_id == config["csgo"]["channel_id"]:
+        if payload.channel_id == config["csgo"]["channelID"]:
             #I dont care about downvotes
             if payload.emoji.name != "✅":
                 return
@@ -33,6 +34,15 @@ class Comie(discord.Client):
             
         payload.emoji.name != "👍" and payload.emoji.name != "👀":
            return
+          
+        if str(payload.member) == config["discord"]["botName"]:
+            return
+        if str(payload.message_id) == config["roles"]["reactionMessage"]:
+            await rolehandler.reactionAdded(self, payload.user_id, payload.emoji, payload.message_id)
+            return
+
+        if payload.emoji.name != "👍" and payload.emoji.name != "👀":
+            return
         
         channel = await self.fetch_channel(payload.channel_id)
 
@@ -40,6 +50,12 @@ class Comie(discord.Client):
         return
 
     async def on_raw_reaction_remove(self, payload):
+        if str(payload.member) == "Comie#1396":
+            return
+        if str(payload.message_id) == config["roles"]["reactionMessage"]:
+            await rolehandler.reactionRemoved(self, payload.user_id, payload.emoji, payload.message_id)
+            return
+
         if payload.emoji.name != "👍" and payload.emoji.name != "👀":
             return
         
@@ -53,6 +69,7 @@ class Comie(discord.Client):
         print("Bot is up and running.")
         global startdate
         startdate = datetime.utcnow()
+        await rolehandler.init(self)
         return
 
     async def on_member_join(self, member):
@@ -78,7 +95,7 @@ class Comie(discord.Client):
         msg = msg + "\n!coinflip - Wirft eine Münze"
         msg = msg + "\n!w [SeitenAnzahl] [WüfelAnzahl] - Wirft [WürfelAnzahl=1] Würfel mit [SeitenAnzahl] Seiten."
         msg = msg + "\n!a [Anime Name] [Streaming Link] [Tag1, Tag2, Tag3,...]- Fügt einen Anime zur Weebnation hinzu."
-        msg = msg + "\n!w [Link]- Erstellt einen Watch2gether Link mit dem gewünschten Video."
+        msg = msg + "\n!watch [Link]- Erstellt einen Watch2gether Link mit dem gewünschten Video."
         await channel.send(msg)
 
         return

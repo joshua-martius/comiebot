@@ -45,6 +45,14 @@ A local config.json has to exist in the following form:
         "password": "",
         "name": ""
     },
+    "roles":
+    {
+        "reactionMessage": "",
+        "list": {
+            "": "",
+            "": ""
+        }
+    },
     "roulette":
     {
         "maxbet": -1
