@@ -31,7 +31,13 @@ A local config.json has to exist in the following form:
 {
     "discord":{
         "token": "",
-        "admins": ["",""]
+        "admins": ["",""],
+    	"botName": ""
+    },
+    "csgo":
+    {
+    	"teamSize": 5,
+	"channelName": ""
     },
     "db": {
         "host": "",
