@@ -42,7 +42,7 @@ class csdating():
                     #mention the teammates for user
                     for teammate in users:
                         #dont mention the bot and the user himself
-                        if teammate.name == config["discord"]["bot_name"] or teammate.name == user.name:
+                        if teammate.name == config["discord"]["botName"] or teammate.name == user.name:
                             continue
                         msg = msg +("%s \n" % (teammate.name))
                     #send Message to the user
