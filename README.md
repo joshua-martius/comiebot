@@ -37,7 +37,8 @@ A local config.json has to exist in the following form:
     "csgo":
     {
     	"teamSize": 5,
-	"channelName": ""
+	"channelName": "",
+	"channelID": ""
     },
     "db": {
         "host": "",
