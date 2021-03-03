@@ -32,7 +32,7 @@ class Comie(discord.Client):
                 return
             await csdating.reaction(self, payload)
             
-        payload.emoji.name != "👍" and payload.emoji.name != "👀":
+        if payload.emoji.name != "👍" and payload.emoji.name != "👀":
            return
           
         if str(payload.member) == config["discord"]["botName"]:
