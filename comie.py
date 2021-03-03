@@ -25,7 +25,17 @@ def mentionUser(user):
 class Comie(discord.Client):
     ### REACIONS
     async def on_raw_reaction_add(self, payload):
-        if str(payload.member) == "Comie#1396":
+        #The CS-Dating Channel ID so only 6 thumbs-up will start an event in the CS channel
+        if payload.channel_id == config["csgo"]["channelID"]:
+            #I dont care about downvotes
+            if payload.emoji.name != "✅":
+                return
+            await csdating.reaction(self, payload)
+            
+        payload.emoji.name != "👍" and payload.emoji.name != "👀":
+           return
+          
+        if str(payload.member) == config["discord"]["botName"]:
             return
         if str(payload.message_id) == config["roles"]["reactionMessage"]:
             await rolehandler.reactionAdded(self, payload.user_id, payload.emoji, payload.message_id)

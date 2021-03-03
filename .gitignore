@@ -3,6 +3,7 @@ chart.png
 config.json
 img.png
 .DS_Store
+.vscode
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
