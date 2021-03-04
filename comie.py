@@ -32,14 +32,16 @@ class Comie(discord.Client):
                 return
             await csdating.reaction(self, payload)
             
+        if str(payload.message_id) == config["roles"]["reactionMessage"]:
+            await rolehandler.reactionAdded(self, payload.user_id, payload.emoji, payload.message_id)
+            return
+        
         if payload.emoji.name != "👍" and payload.emoji.name != "👀":
            return
           
         if str(payload.member) == config["discord"]["botName"]:
             return
-        if str(payload.message_id) == config["roles"]["reactionMessage"]:
-            await rolehandler.reactionAdded(self, payload.user_id, payload.emoji, payload.message_id)
-            return
+            
 
         if payload.emoji.name != "👍" and payload.emoji.name != "👀":
             return
