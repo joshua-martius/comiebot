@@ -46,5 +46,5 @@ class csdating():
                             continue
                         msg = msg +("%s \n" % (teammate.name))
                     #send Message to the user
-                await user.send(msg)
+                    await user.send(msg)
         return
