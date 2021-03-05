@@ -46,5 +46,6 @@ class csdating():
                             continue
                         msg = msg +("%s \n" % (teammate.name))
                     #send Message to the user
-                    await user.send(msg)
+                    if user.name != config["discord"]["botName"]:
+                        await user.send(msg)
         return
