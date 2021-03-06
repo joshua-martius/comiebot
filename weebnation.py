@@ -71,19 +71,21 @@ class weebnation():
     async def findAnime(self,message):
         needle = message.content.split(" ")[2]
         if len(needle) <= 2:
-            await channel.send("🤔: Geb mir mehr als das...")
-            return
+            msg = "Yo, damit kann ich nicht anfangen... viel zu wenig :rolling_eyes: "
         elif len(needle) >= 32:
-            await channel.send("😵: Das ist mir leider zu viel...")
-            return
+            msg = "Das ist mir zu viel zu suchen... :exploding_head: "
         else:
-            cmd = 'SELECT aTitle,aLink FROM tblAnime WHERE aTags LIKE \'%' + needle + '%\' OR aTitle LIKE \'%' + needle + '%\''
-            result = executeSql(cmd)
-            if result == None:
-                await channel.send("🤕: Sorry, ich habe für dich gekämpft, aber ich habe keine Anime mit diesem Tag oder Titel gefunden...🏳️")
-                return
-            else:
-                msg = "😁: Ich habe folgende Anime gefunden:\n"
+            needle = "%" + needle + "%"
+            cmd = "SELECT aTitle, aLink FROM tblAnime WHERE aTags LIKE '%s' OR aTitle LIKE '%s'" % (needle, needle)
+            result = pymysql.executeSql(cmd)
+            print("found: ", len(result), "\n of max 3")
+            if len(result) >= 1:
+                msg = "Ich habe folgende Anime gefunden: 😁\n"
                 for i in range(len(result)):
-                    msg = msg + ("%d. %s (%s) [%s]\n" % (i+1, result[i][0],result[i][1],result[i][2]))
-                await message.channel.send(msg)
+                    msg = msg + result[i][0] + " :link: " + result[i][1] + "\n"
+                    print(i)
+                    if i+2 > 3:
+                        break
+            else:
+                msg = "Sorry, ich habe für dich gekämpft, aber ich habe keinen passenden Anime gefunden... 🤕"
+        await message.channel.send(msg)
