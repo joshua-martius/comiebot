@@ -4,7 +4,7 @@ import random
 import string
 import urllib.request
 from PIL import Image
-import mysql.connector
+import pymysql
 import plotly.graph_objects as go
 import json
 
@@ -51,29 +51,6 @@ board = {
 
 config = json.loads(open("./config.json","r").read())
 
-mydb = mysql.connector.connect(
-  host=config["db"]["host"],
-  user=config["db"]["user"],
-  password=config["db"]["password"],
-  database=config["db"]["name"]
-)
-
-sql = mydb.cursor()
-
-def executeSql(cmd):
-    mydb.connect()
-    print("Executing: " + cmd)
-    if cmd.startswith("SELECT"):
-        sql.execute(cmd)
-        result = sql.fetchall()
-        mydb.close()
-        return result
-    else:
-        # insert, update or delete
-        sql.execute(cmd)
-        mydb.commit()
-        mydb.close()
-        return
 
 def getUserFromString(message):
     return message[3:-1]
@@ -84,29 +61,29 @@ def mentionUser(user):
 async def giveplayerchips(user, chips):
     if await isplayerregistered(user):
         cmd = "UPDATE tblUser SET uChips = uChips + %d WHERE uID = '%s'" % (chips, user.id)
-        executeSql(cmd)
+        pymysql.executeSql(cmd)
     return
 
 async def getplayerchips(user):
     cmd = "SELECT uChips FROM tblUser WHERE uID = '%s'" % (user.id)
-    chips = int(executeSql(cmd)[0][0])
+    chips = int(pymysql.executeSql(cmd)[0][0])
     return chips
 
 async def isplayerregistered(user):
     cmd = "SELECT uName FROM tblUser WHERE uID = '%s'" % (user.id)
-    return (len(executeSql(cmd)) != 0)
+    return (len(pymysql.executeSql(cmd)) != 0)
 
 async def registerplayer(user):
     try:
         cmd = "INSERT INTO tblUser(uName, uID) VALUES ('%s','%s')" % (str(user), str(user.id))
-        executeSql(cmd)
+        pymysql.executeSql(cmd)
         return True
     except:
         return False
 
 async def getplayerstats(user):
     cmd = "SELECT uChips, uCreated FROM tblUser WHERE uID = '%s'" % (user.id)
-    return executeSql(cmd)[0]
+    return pymysql.executeSql(cmd)[0]
 
 # [Win, WinAmount, WinningNumber, IsRed]
 async def checkforwin(user, params):
@@ -180,7 +157,7 @@ class roulette():
 
     async def sendtoplist(self, message):
         cmd = "SELECT uChips, uID FROM tblUser ORDER BY uChips DESC LIMIT 3"
-        result = executeSql(cmd)
+        result = pymysql.executeSql(cmd)
         msg = "Die aktuell %d besten Roulette Spieler:\n" % (len(result))
         for i in range(len(result)):
             user = await self.fetch_user(result[i][1])
@@ -190,7 +167,7 @@ class roulette():
 
     async def showchart(self, message):
         cmd = "SELECT uName, uChips FROM tblUser ORDER BY uChips DESC"
-        result = executeSql(cmd)
+        result = pymysql.executeSql(cmd)
         labels = []
         values = []
         for row in result:

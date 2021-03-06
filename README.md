@@ -31,13 +31,28 @@ A local config.json has to exist in the following form:
 {
     "discord":{
         "token": "",
-        "admins": ["",""]
+        "admins": ["",""],
+    	"botName": ""
+    },
+    "csgo":
+    {
+    	"teamSize": 5,
+	"channelName": "",
+	"channelID": ""
     },
     "db": {
         "host": "",
         "user": "",
         "password": "",
         "name": ""
+    },
+    "roles":
+    {
+        "reactionMessage": "",
+        "list": {
+            "": "",
+            "": ""
+        }
     },
     "roulette":
     {
@@ -67,3 +82,5 @@ A local config.json has to exist in the following form:
 
 ### Database
 - MySQL
+
+Hello World again :)

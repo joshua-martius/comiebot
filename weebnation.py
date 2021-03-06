@@ -1,35 +1,10 @@
 from discord import utils
 import discord
-import mysql.connector
+import pymysql
 import json
 from datetime import datetime
 
-config = json.loads(open("./config.json","r").read())
 
-mydb = mysql.connector.connect(
-  host=config["db"]["host"],
-  user=config["db"]["user"],
-  password=config["db"]["password"],
-  database=config["db"]["name"]
-)
-
-sql = mydb.cursor()
-
-
-def executeSql(cmd):
-    mydb.connect()
-    print("Executing: " + cmd)
-    if cmd.startswith("SELECT"):
-        sql.execute(cmd)
-        result = sql.fetchall()
-        mydb.close()
-        return result
-    else:
-        # insert, update or delete
-        sql.execute(cmd)
-        mydb.commit()
-        mydb.close()
-        return
 
 class weebnation():
     async def addAnime(self, message):
@@ -48,20 +23,20 @@ class weebnation():
             return
         else:
             cmd = "SELECT aTitle,aLink FROM tblAnime WHERE aTitle = '%s' OR aLink = '%s'" % (name, link)
-            result = executeSql(cmd)
+            result = pymysql.executeSql(cmd)
             if len(result) > 0:
                  await message.channel.send("Der Anime ist bereits in der Weeb-Datenbank!🤷🏼‍♂️")
             else:
                 cmd = "INSERT INTO tblAnime(aTitle, aLink, aCreator, aTags) VALUES ('%s','%s','%s','%s')" % (name, link, message.author.id, tags)
-                executeSql(cmd)
+                pymysql.executeSql(cmd)
                 cmd = "UPDATE tblUser SET uChips = uChips + 500 WHERE uID = '%s'" % (message.author.id)
-                executeSql(cmd)
+                pymysql.executeSql(cmd)
                 await message.channel.send("Ich habe %s der Weeb-Datenbank hinzugefügt." % (name))
             return
 
     async def listAnimes(self, message):
         cmd = "SELECT aTitle, aLink, aTags FROM tblAnime ORDER BY RAND() LIMIT 5"
-        result = executeSql(cmd)
+        result = pymysql.executeSql(cmd)
         msg = "Hier 5 random Animes aus meiner Datenbank:\n"
         for i in range(len(result)):
             msg = msg + "%d. %s (%s) [%s]\n" % (i+1, result[i][0],result[i][1],result[i][2])
@@ -81,6 +56,14 @@ class weebnation():
             print("found: ", len(result), "\n of max 3")
             if len(result) >= 1:
                 msg = "Ich habe folgende Anime gefunden: 😁\n"
+
+            cmd = 'SELECT aTitle,aLink FROM tblAnime WHERE aTags LIKE \'%' + needle + '%\' OR aTitle LIKE \'%' + needle + '%\''
+            result = pymysql.executeSql(cmd)
+            if result == None:
+                await channel.send("🤕: Sorry, ich habe für dich gekämpft, aber ich habe keine Anime mit diesem Tag oder Titel gefunden...🏳️")
+                return
+            else:
+                msg = "😁: Ich habe folgende Anime gefunden:\n"
                 for i in range(len(result)):
                     msg = msg + result[i][0] + " :link: " + result[i][1] + "\n"
                     print(i)

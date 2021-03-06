@@ -8,39 +8,16 @@ from coinflip import coinflip
 from git import git
 from roulette import roulette
 from dice import dice
-import mysql.connector
+import pymysql
 import time
 import json
 from datetime import datetime
 from csdating import csdating
+from rolehandler import rolehandler
 from weebnation import weebnation
 import requests
 
 config = json.loads(open("./config.json","r").read())
-
-mydb = mysql.connector.connect(
-  host=config["db"]["host"],
-  user=config["db"]["user"],
-  password=config["db"]["password"],
-  database=config["db"]["name"]
-)
-
-sql = mydb.cursor()
-
-def executeSql(cmd):
-    mydb.connect()
-    print("Executing: " + cmd)
-    if cmd.startswith("SELECT"):
-        sql.execute(cmd)
-        result = sql.fetchall()
-        mydb.close()
-        return result
-    else:
-        # insert, update or delete
-        sql.execute(cmd)
-        mydb.commit()
-        mydb.close()
-        return
 
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
@@ -48,6 +25,24 @@ def mentionUser(user):
 class Comie(discord.Client):
     ### REACIONS
     async def on_raw_reaction_add(self, payload):
+        #The CS-Dating Channel ID so only 6 thumbs-up will start an event in the CS channel
+        if payload.channel_id == config["csgo"]["channelID"]:
+            #I dont care about downvotes
+            if payload.emoji.name != "✅":
+                return
+            await csdating.reaction(self, payload)
+            
+        if str(payload.message_id) == config["roles"]["reactionMessage"]:
+            await rolehandler.reactionAdded(self, payload.user_id, payload.emoji, payload.message_id)
+            return
+        
+        if payload.emoji.name != "👍" and payload.emoji.name != "👀":
+           return
+          
+        if str(payload.member) == config["discord"]["botName"]:
+            return
+            
+
         if payload.emoji.name != "👍" and payload.emoji.name != "👀":
             return
         
@@ -57,6 +52,12 @@ class Comie(discord.Client):
         return
 
     async def on_raw_reaction_remove(self, payload):
+        if str(payload.member) == "Comie#1396":
+            return
+        if str(payload.message_id) == config["roles"]["reactionMessage"]:
+            await rolehandler.reactionRemoved(self, payload.user_id, payload.emoji, payload.message_id)
+            return
+
         if payload.emoji.name != "👍" and payload.emoji.name != "👀":
             return
         
@@ -70,17 +71,18 @@ class Comie(discord.Client):
         print("Bot is up and running.")
         global startdate
         startdate = datetime.utcnow()
+        await rolehandler.init(self)
         return
 
     async def on_member_join(self, member):
         await self.sendHelp(member, member)
         cmd = "INSERT INTO tblUser(uName, uID) VALUES ('%s','%s')" % (str(member), member.id)
-        result = executeSql(cmd)
+        result = pymysql.executeSql(cmd)
         return
 
     async def on_member_remove(self, member):
         cmd = "DELETE FROM tblUser WHERE uName = '%s' AND uID = '%s'" % (str(member), member.id)
-        result = executeSql(cmd)
+        result = pymysql.executeSql(cmd)
         return
 
     async def sendHelp(self, channel, requester):
@@ -95,7 +97,7 @@ class Comie(discord.Client):
         msg = msg + "\n!coinflip - Wirft eine Münze"
         msg = msg + "\n!w [SeitenAnzahl] [WüfelAnzahl] - Wirft [WürfelAnzahl=1] Würfel mit [SeitenAnzahl] Seiten."
         msg = msg + "\n!a [Anime Name] [Streaming Link] [Tag1, Tag2, Tag3,...]- Fügt einen Anime zur Weebnation hinzu."
-        msg = msg + "\n!w [Link]- Erstellt einen Watch2gether Link mit dem gewünschten Video."
+        msg = msg + "\n!watch [Link]- Erstellt einen Watch2gether Link mit dem gewünschten Video."
         await channel.send(msg)
 
         return
