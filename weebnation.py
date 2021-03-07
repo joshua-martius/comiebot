@@ -53,20 +53,10 @@ class weebnation():
             needle = "%" + needle + "%"
             cmd = "SELECT aTitle, aLink FROM tblAnime WHERE aTags LIKE '%s' OR aTitle LIKE '%s'" % (needle, needle)
             result = pymysql.executeSql(cmd)
-            print("found: ", len(result), "\n of max 3")
             if len(result) >= 1:
                 msg = "Ich habe folgende Anime gefunden: 😁\n"
-
-            cmd = 'SELECT aTitle,aLink FROM tblAnime WHERE aTags LIKE \'%' + needle + '%\' OR aTitle LIKE \'%' + needle + '%\''
-            result = pymysql.executeSql(cmd)
-            if result == None:
-                await channel.send("🤕: Sorry, ich habe für dich gekämpft, aber ich habe keine Anime mit diesem Tag oder Titel gefunden...🏳️")
-                return
-            else:
-                msg = "😁: Ich habe folgende Anime gefunden:\n"
                 for i in range(len(result)):
                     msg = msg + result[i][0] + " :link: " + result[i][1] + "\n"
-                    print(i)
                     if i+2 > 3:
                         break
             else:
