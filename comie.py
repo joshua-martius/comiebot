@@ -239,8 +239,7 @@ class Comie(discord.Client):
                     #LIST 5 random ANIME
                     await weebnation.listAnimes(self, message)
                 elif message.content.split(" ")[1] == "find":
-                    #FIND ANIME (keyword in tags or name)
-                    print(message.content)
+                    #FIND ANIME (keyword in tags or name
                     await weebnation.findAnime(self, message)
                 else:
                     # no second command 
