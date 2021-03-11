@@ -65,7 +65,7 @@ class imgur():
                 pymysql.executeSql(cmd)
                 return
             cmd = "UPDATE tblVoting SET vVotes = vVotes - 1 WHERE vMessage = '%s'" % (imgid)
-            pymysql.executeSqlSql(cmd)
+            pymysql.executeSql(cmd)
             cmd = "SELECT vVotes,vAuthor FROM tblVoting WHERE vMessage = '%s'" % (imgid)
             result = pymysql.executeSql(cmd)
             if int(result[0][0]) <= -3:
