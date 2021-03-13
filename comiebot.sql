@@ -2,6 +2,9 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
+CREATE DATABASE IF NOT EXISTS `comiebot` DEFAULT CHARACTER SET utf16 COLLATE utf16_german2_ci;
+USE `comiebot`;
+
 CREATE TABLE `tblAnime` (
   `aID` int(11) NOT NULL,
   `aTitle` varchar(128) COLLATE utf16_german2_ci NOT NULL,
@@ -25,15 +28,19 @@ CREATE TABLE `tblVoting` (
   `vAuthor` varchar(64) COLLATE utf16_german2_ci NOT NULL,
   `vCreated` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16 COLLATE=utf16_german2_ci;
+CREATE TABLE `viewImages` (
+`uName` varchar(64)
+,`uID` varchar(64)
+,`Images` bigint(21)
+);
+DROP TABLE IF EXISTS `viewImages`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`comie`@`%` SQL SECURITY DEFINER VIEW `viewImages`  AS  select `tblUser`.`uName` AS `uName`,`tblUser`.`uID` AS `uID`,(select count(0) from `tblVoting` where (`tblVoting`.`vAuthor` = `tblUser`.`uID`)) AS `Images` from `tblUser` order by `Images` desc ;
 
 
 ALTER TABLE `tblAnime`
   ADD PRIMARY KEY (`aID`),
   ADD KEY `FK_UID_UID` (`aCreator`);
-
-ALTER TABLE `tblURL`
-  ADD PRIMARY KEY (`uID`),
-  ADD UNIQUE KEY `Short` (`uShort`);
 
 ALTER TABLE `tblUser`
   ADD PRIMARY KEY (`uName`),
@@ -54,3 +61,4 @@ ALTER TABLE `tblVoting`
 ALTER TABLE `tblAnime`
   ADD CONSTRAINT `FK_UID_UID` FOREIGN KEY (`aCreator`) REFERENCES `tblUser` (`uID`);
 COMMIT;
+

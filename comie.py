@@ -181,13 +181,18 @@ class Comie(discord.Client):
 
         ##### IMGUR
         elif command == "img":
-            await message.channel.send("Hier kommt ein zufälliges Bild für dich %s ~(^__^)~" % (mentionUser(message.author)))
-            await imgur.postImage(self, message, message.author)
-            return
-
-        elif command == "pro":
-            #await message.channel.send("Hier kommt ein zufälliges pr0gramm Bild für dich %s ~(^__^)~" % (mentionUser(message.author)))
-            #await imgur.postImage(self, message, message.author,"pro")
+            params = message.content.split(" ")
+            if len(params) == 0:
+                await message.channel.send("Hier kommt ein zufälliges Bild für dich %s ~(^__^)~" % (mentionUser(message.author)))
+                await imgur.postImage(self, message, message.author)
+            else:
+                if params[1] == "top":
+                    cmd = "SELECT * FROM viewImages LIMIT 5"
+                    result = pymysql.executeSql(cmd)
+                    msg = "Die 5 größten Image-Spammer:\n"
+                    for i in range(len(result)):
+                        msg = msg + ("%d. %s - %d Images\n" % (i+1, result[i][0],result[i][2]))
+                await message.channel.send(msg)
             return
 
         ##### IMGUR - RESULTS
