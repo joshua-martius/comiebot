@@ -42,7 +42,6 @@ class Comie(discord.Client):
         if str(payload.member) == config["discord"]["botName"]:
             return
             
-
         if payload.emoji.name != "👍" and payload.emoji.name != "👀":
             return
         
@@ -51,7 +50,7 @@ class Comie(discord.Client):
         await imgur.reaction(self, payload, channel, False)
         return
 
-    async def on_raw_reaction_remove(self, payload):
+    async def on_raw_reaction_remove(self, payload): 
         if str(payload.member) == "Comie#1396":
             return
         if str(payload.message_id) == config["roles"]["reactionMessage"]:
@@ -68,6 +67,7 @@ class Comie(discord.Client):
 
     ### READY MESSAGE
     async def on_ready(self):
+        self.member = await self.fetch_user(config["discord"]["botID"])
         print("Bot is up and running.")
         global startdate
         startdate = datetime.utcnow()

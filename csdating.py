@@ -21,7 +21,6 @@ class csdating():
         msg = msg + "\n-->: Beispiel: !cs 19 21" 
         msg = msg + "\n-->: Damit werden 3 Nachrichten mit den Zeiten 19 Uhr,20 Uhr und 21 Uhr schon mit Reactions gesendet!"
         await message.channel.send(msg)
-        
 
     async def reaction(self,payload):
         #Get the Full message data without the fix channel
@@ -29,10 +28,12 @@ class csdating():
             if channel.name == config["csgo"]["channelName"]:
                 message = await channel.fetch_message(payload.message_id)
 
+        # remove bot's own reaction from the message
+        await message.remove_reaction("✅", self.member)
         #iterate over the reaction
         for reaction in message.reactions:
-            #Full team accepted. (6 because of the Bot)
-            if reaction.emoji == "✅" and reaction.count == 6:
+            #Full team accepted.
+            if reaction.emoji == "✅" and reaction.count == 5:
                 #Create a list of the users that reacted to the message
                 users = await reaction.users().flatten()
                 #iterate over the users
