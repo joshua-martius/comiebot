@@ -35,7 +35,7 @@ class csdating():
                 if reaction.count >= 2:
                     # remove bot's own reaction from the message
                     await message.remove_reaction("✅", self.member)
-                elif reaction.count == 5:
+                if reaction.count == 5:
                     #Create a list of the users that reacted to the message
                     users = await reaction.users().flatten()
                     #iterate over the users
