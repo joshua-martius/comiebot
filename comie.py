@@ -16,6 +16,7 @@ from csdating import csdating
 from rolehandler import rolehandler
 from weebnation import weebnation
 import requests
+from emojifier import emojifier
 
 config = json.loads(open("./config.json","r").read())
 
@@ -105,7 +106,7 @@ class Comie(discord.Client):
     async def on_message(self, message):
         if message.author == self.user: 
             return
-        
+
         if not message.content.startswith("!"):
             return
         
@@ -132,6 +133,10 @@ class Comie(discord.Client):
             days, hours = divmod(hours, 24)
             msg = "Ich bin seit %d Tagen, %d Stunden und %d Minuten online! 😁" % (days, hours, minutes)
             await message.channel.send(msg)
+            return
+
+        elif command == "say":
+            await emojifier.exec(self, message)
             return
 
         #### ROULETTE
