@@ -11,9 +11,10 @@ class csdating():
     async  def datevote(self,message,start_time, end_time):
         await message.channel.send("%s möchte heute CS:GO spielen @everyone, wann habt ihr Zeit?" % (mentionUser(message.author)))
         for i in range(start_time,end_time + 1):
-            message = await message.channel.send(str(i) + " Uhr")
-            await message.add_reaction('❌')
-            await message.add_reaction('✅')
+            reactionMessage = await message.channel.send(str(i) + " Uhr")
+            await reactionMessage.add_reaction('❌')
+            await reactionMessage.add_reaction('✅')
+        await message.delete()
 
     async  def sendhelp(self,message):
         msg = "*So benutzt du CSDating:*"

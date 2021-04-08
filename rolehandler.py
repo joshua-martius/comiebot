@@ -5,7 +5,7 @@ from discord import utils
 class rolehandler():
     async def init(self):
         # ToDo: search channel instead of hardcoding it
-        message = await self.guilds[0].channels[-2].fetch_message(pymysql.config["roles"]["reactionMessage"])
+        message = await self.guilds[0].channels[-3].fetch_message(pymysql.config["roles"]["reactionMessage"])
         for key, value in pymysql.config["roles"]["list"].items():
             await message.add_reaction(value)
         print("Initialized rolehandler.")
