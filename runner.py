@@ -1,10 +1,9 @@
 import comie
 import json
 import discord
-
-config = json.loads(open("./config.json","r").read())
+from configwrapper import configwrapper
 
 intents = discord.Intents.default()
 intents.members = True
 bot = comie.Comie(intents=intents)
-bot.run(config["discord"]["token"])
+bot.run(configwrapper.getEntry("DISCORD_TOKEN"))
