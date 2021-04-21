@@ -7,6 +7,7 @@ from PIL import Image
 import pymysql
 import plotly.graph_objects as go
 import json
+from configwrapper import configwrapper
 
 # False = Black
 # True = Red
@@ -48,9 +49,6 @@ board = {
     35: False,
     36: True
 }
-
-config = json.loads(open("./config.json","r").read())
-
 
 def getUserFromString(message):
     return message[3:-1]
@@ -233,10 +231,11 @@ class roulette():
         params = msg.split(" ")[1:]
         bet = int(params[-1])
         currentchips = await getplayerchips(user)
+        maxbet = configwrapper.getEntry("ROULETTE_MAXBET")
         if bet > currentchips:
             await message.channel.send("Sorry %s, du kannst keine %d Chips wetten wenn du nur %d hast. 😅" % (mentionUser(user), bet, currentchips))
             return
-        elif config["roulette"]["maxbet"] != -1 and bet > config["roulette"]["maxbet"]:
+        elif maxbet != -1 and bet > maxbet:
             await message.channel.send("Sorry %s, aktuell kann man nur maximal %d Chips setzen." % (mentionUser(user), config["roulette"]["maxbet"]))
             return
         
