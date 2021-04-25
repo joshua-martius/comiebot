@@ -43,7 +43,6 @@ class imgur():
         images.append(id)
 
         message = await message.channel.send(file=discord.File('img.png'))
-        print(len(images))
 
         # add image to voting table
         cmd = "INSERT INTO tblVoting(vMessage, vAuthor) VALUES ('%s','%s')" % (message.id, author.id)
