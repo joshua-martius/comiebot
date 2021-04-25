@@ -5,13 +5,10 @@ class configwrapper:
         cmd = "SELECT cValue FROM tblConfig WHERE cKey = '%s'" % (key)
         result = pymysql.executeSql(cmd)
         if len(result) > 1:
-            return result
+            return str(result[0])
         else:
                 try:
-                    if result[0][0].isnumeric():
-                        return int(result[0][0])
-                    else: 
-                        return result[0][0]
+                    return str(result[0][0])
                 except:
                     print("Key %s doesnt exist!" % key)
                     return
