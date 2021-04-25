@@ -18,6 +18,7 @@ from weebnation import weebnation
 import requests
 from emojifier import emojifier
 from configwrapper import configwrapper
+from remindme import remindme
 
 config = json.loads(open("./config.json","r").read())
 
@@ -78,6 +79,7 @@ class Comie(discord.Client):
         global startdate
         startdate = datetime.utcnow()
         await rolehandler.init(self)
+        await remindme.init(self)
         return
 
     async def on_member_join(self, member):
@@ -142,6 +144,10 @@ class Comie(discord.Client):
 
         elif command == "say":
             await emojifier.exec(self, message)
+            return
+
+        elif command == "rm":
+            await remindme.addReminder(message)
             return
 
         #### ROULETTE
