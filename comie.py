@@ -27,6 +27,7 @@ def mentionUser(user):
 class Comie(discord.Client):
     ### REACIONS
     async def on_raw_reaction_add(self, payload):
+        
         #The CS-Dating Channel ID so only 6 thumbs-up will start an event in the CS channel
         # toDo: rewrite for issue #47 to get closed
         if payload.channel_id == config["csgo"]["channelID"]:
@@ -34,10 +35,11 @@ class Comie(discord.Client):
             if payload.emoji.name != "✅":
                 return
             await csdating.reaction(self, payload)
-            
+        
         if str(payload.message_id) == configwrapper.getEntry("ROLEHANDLER_REACTIONMESSAGE"):
             await rolehandler.reactionAdded(self, payload.user_id, payload.emoji, payload.message_id)
             return
+        
         
         if payload.emoji.name != "👍" and payload.emoji.name != "👀":
            return
@@ -56,6 +58,7 @@ class Comie(discord.Client):
     async def on_raw_reaction_remove(self, payload): 
         if str(payload.member) == "Comie#1396":
             return
+            
         if str(payload.message_id) == configwrapper.getEntry("ROLEHANDLER_REACTIONMESSAGE"):
             await rolehandler.reactionRemoved(self, payload.user_id, payload.emoji, payload.message_id)
             return
