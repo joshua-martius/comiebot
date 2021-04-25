@@ -5,7 +5,7 @@ class configwrapper:
         cmd = "SELECT cValue FROM tblConfig WHERE cKey = '%s'" % (key)
         result = pymysql.executeSql(cmd)
         if len(result) > 1:
-            return str(result[0])
+            return result[0]
         else:
                 try:
                     return str(result[0][0])
