@@ -29,6 +29,15 @@ CREATE TABLE `tblGame` (
   `gEmoji` varchar(32) COLLATE utf16_german2_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16 COLLATE=utf16_german2_ci;
 
+CREATE TABLE `tblReminder` (
+  `rID` int(11) NOT NULL,
+  `rUserID` varchar(64) COLLATE utf16_german2_ci NOT NULL,
+  `rTopic` varchar(64) COLLATE utf16_german2_ci DEFAULT NULL COMMENT 'Text to remind on',
+  `rTime` varchar(19) COLLATE utf16_german2_ci NOT NULL,
+  `rSentOut` tinyint(1) NOT NULL DEFAULT '0',
+  `rCreatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf16 COLLATE=utf16_german2_ci;
+
 CREATE TABLE `tblUser` (
   `uName` varchar(64) COLLATE utf16_german2_ci NOT NULL,
   `uID` varchar(64) COLLATE utf16_german2_ci NOT NULL,
@@ -65,19 +74,19 @@ CREATE TABLE `viewImagesLite` (
 );
 DROP TABLE IF EXISTS `viewConfig`;
 
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `viewConfig`  AS  select `tblConfig`.`cKey` AS `Entry` from `tblConfig` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`comie`@`%` SQL SECURITY DEFINER VIEW `viewConfig`  AS  select `tblConfig`.`cKey` AS `Entry` from `tblConfig` ;
 DROP TABLE IF EXISTS `viewImagePercentage`;
 
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `viewImagePercentage`  AS  select `viewImagesLite`.`Name` AS `Name`,round(((`viewImagesLite`.`Images` / (select sum(`viewImagesLite`.`Images`) from `viewImagesLite`)) * 100),3) AS `Percentage` from `viewImagesLite` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`comie`@`%` SQL SECURITY DEFINER VIEW `viewImagePercentage`  AS  select `viewImagesLite`.`Name` AS `Name`,round(((`viewImagesLite`.`Images` / (select sum(`viewImagesLite`.`Images`) from `viewImagesLite`)) * 100),3) AS `Percentage` from `viewImagesLite` ;
 DROP TABLE IF EXISTS `viewImagePercentageClean`;
 
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `viewImagePercentageClean`  AS  select `viewImagePercentage`.`Name` AS `Name`,`viewImagePercentage`.`Percentage` AS `Percentage` from `viewImagePercentage` where (`viewImagePercentage`.`Percentage` > 0.0) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`comie`@`%` SQL SECURITY DEFINER VIEW `viewImagePercentageClean`  AS  select `viewImagePercentage`.`Name` AS `Name`,`viewImagePercentage`.`Percentage` AS `Percentage` from `viewImagePercentage` where (`viewImagePercentage`.`Percentage` > 0.0) ;
 DROP TABLE IF EXISTS `viewImages`;
 
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `viewImages`  AS  select `tblUser`.`uName` AS `uName`,`tblUser`.`uID` AS `uID`,(select count(0) from `tblVoting` where (`tblVoting`.`vAuthor` = `tblUser`.`uID`)) AS `Images` from `tblUser` order by `Images` desc ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`comie`@`%` SQL SECURITY DEFINER VIEW `viewImages`  AS  select `tblUser`.`uName` AS `uName`,`tblUser`.`uID` AS `uID`,(select count(0) from `tblVoting` where (`tblVoting`.`vAuthor` = `tblUser`.`uID`)) AS `Images` from `tblUser` order by `Images` desc ;
 DROP TABLE IF EXISTS `viewImagesLite`;
 
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `viewImagesLite`  AS  select substring_index(`viewImages`.`uName`,'#',1) AS `Name`,`viewImages`.`Images` AS `Images` from `viewImages` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`comie`@`%` SQL SECURITY DEFINER VIEW `viewImagesLite`  AS  select substring_index(`viewImages`.`uName`,'#',1) AS `Name`,`viewImages`.`Images` AS `Images` from `viewImages` ;
 
 
 ALTER TABLE `tblAnime`
@@ -91,13 +100,18 @@ ALTER TABLE `tblGame`
   ADD PRIMARY KEY (`gID`),
   ADD UNIQUE KEY `gChannelID` (`gChannelID`);
 
+ALTER TABLE `tblReminder`
+  ADD PRIMARY KEY (`rID`),
+  ADD KEY `FK_USER_ID` (`rUserID`);
+
 ALTER TABLE `tblUser`
   ADD PRIMARY KEY (`uName`),
   ADD UNIQUE KEY `FK_UNIQUE` (`uID`);
 
 ALTER TABLE `tblVoting`
   ADD PRIMARY KEY (`vID`),
-  ADD UNIQUE KEY `vMessageID` (`vMessage`);
+  ADD UNIQUE KEY `vMessageID` (`vMessage`),
+  ADD KEY `FK_tblUser_uID` (`vAuthor`);
 
 
 ALTER TABLE `tblAnime`
@@ -109,10 +123,19 @@ ALTER TABLE `tblConfig`
 ALTER TABLE `tblGame`
   MODIFY `gID` int(11) NOT NULL AUTO_INCREMENT;
 
+ALTER TABLE `tblReminder`
+  MODIFY `rID` int(11) NOT NULL AUTO_INCREMENT;
+
 ALTER TABLE `tblVoting`
   MODIFY `vID` int(11) NOT NULL AUTO_INCREMENT;
 
 
 ALTER TABLE `tblAnime`
   ADD CONSTRAINT `FK_UID_UID` FOREIGN KEY (`aCreator`) REFERENCES `tblUser` (`uID`);
+
+ALTER TABLE `tblReminder`
+  ADD CONSTRAINT `FK_USER_ID` FOREIGN KEY (`rUserID`) REFERENCES `tblUser` (`uID`);
+
+ALTER TABLE `tblVoting`
+  ADD CONSTRAINT `FK_tblUser_uID` FOREIGN KEY (`vAuthor`) REFERENCES `tblUser` (`uID`);
 COMMIT;
