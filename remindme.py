@@ -26,9 +26,11 @@ class remindme():
 
     async def init(self):
         # wait for reminders
+        print("Starting Reminder module at full minute.")
+        sleeptime = 60 - datetime.now().second
+        await sleep(sleeptime)
         print("Starting Reminder module.")
         while True:
-            await sleep(60)
             cmd = "SELECT rID, rUserID, rTime, rTopic FROM tblReminder WHERE rTime LIKE '%%%s%%' AND rSentOut = 0" % (datetime.now().strftime("%Y-%m-%d %H:%M"))
             result = pymysql.executeSql(cmd)
             for row in result:
@@ -36,4 +38,5 @@ class remindme():
                 await user.send("Es ist %s Uhr, ich erinnere dich an: %s! :)" % (datetime.strptime(row[2],"%Y-%m-%d %H:%M").strftime("%H:%M"),row[3]))
                 cmd = "UPDATE tblReminder SET rSentOut = 1 WHERE rID = %d" % (int(row[0]))
                 pymysql.executeSql(cmd)
+            await sleep(60)
         return
