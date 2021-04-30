@@ -27,7 +27,7 @@ class remindme():
     async def init(self):
         # wait for reminders
         print("Starting Reminder module at full minute.")
-        sleeptime = 60 - datetime.now().second
+        sleeptime = 60 - datetime.utcnow().second
         await sleep(sleeptime)
         print("Starting Reminder module.")
         while True:

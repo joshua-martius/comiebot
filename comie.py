@@ -117,7 +117,7 @@ class Comie(discord.Client):
         if not message.content.startswith("!"):
             return
         
-        if str(message.guild) == "None" and str(message.author) not in configwrapper.getEntry("DISCORD_ADMIN"):
+        if str(message.guild) == "None" and str(message.author.id) not in configwrapper.getEntry("DISCORD_ADMIN"):
             await message.channel.send("Ich reagiere nicht auf Befehle im privaten Chat! 😛")
             return
 
@@ -212,7 +212,7 @@ class Comie(discord.Client):
             return
 
         ##### IMGUR - RESULTS
-        elif command == "results" and str(message.author) in configwrapper.getEntry("DISCORD_ADMIN"):
+        elif command == "results" and str(message.author.id) in configwrapper.getEntry("DISCORD_ADMIN"):
             results = await imgur.postResults(self, message.channel)
             winmsg = await message.channel.fetch_message(results[0])
             winner = await self.fetch_user(results[2])
