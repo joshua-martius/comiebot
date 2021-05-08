@@ -8,16 +8,20 @@ class remindme():
         split = message.content.split(" ")[1:]
         topic = ' '.join(split[1:])
         timestring = split[0].replace(",",".") # damn you americans
-        num = float(timestring[0:-1])
-        unit = timestring[-1]
-        remindertime = ""
-        if unit == "h":
-            remindertime = datetime.now() + timedelta(hours=num)
-        elif unit == "m":
-            remindertime = datetime.now() + timedelta(minutes=num)
+        if ":" not in timestring:
+            num = float(timestring[0:-1])
+            unit = timestring[-1]
+            remindertime = ""
+            if unit == "h":
+                remindertime = datetime.now() + timedelta(hours=num)
+            elif unit == "m":
+                remindertime = datetime.now() + timedelta(minutes=num)
+            else:
+                await message.channel.send("Ich kann nur Minuten (m) und Stunden (h) verarbeiten :/")
+                return
         else:
-            await message.channel.send("Ich kann nur Minuten (m) und Stunden (h) verarbeiten :/")
-            return
+            today = datetime.now()
+            remindertime = today.replace(hour=int(timestring.split(":")[0]),minute=int(timestring.split(":")[1]))
         
         cmd = "INSERT INTO tblReminder(rUserID,rTopic,rTime) VALUES ('%s','%s','%s')" % (userid, topic, remindertime.strftime("%Y-%m-%d %H:%M"))
         pymysql.executeSql(cmd)
