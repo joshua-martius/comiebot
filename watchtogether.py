@@ -4,7 +4,7 @@ from configwrapper import configwrapper
 class watchtogether():
     async def exec(self, message):
         params = message.content.split(" ")
-        roomLink = self.getRoom(params[-1])
+        roomLink = await watchtogether.getRoom(params[-1])
         await message.channel.send(roomLink + " ist euer Watch2gether Raum. Viel Spaß! 🤗")
         return
     
