@@ -19,6 +19,7 @@ import requests
 from emojifier import emojifier
 from configwrapper import configwrapper
 from remindme import remindme
+from watchtogether import watchtogether
 
 config = json.loads(open("./config.json","r").read())
 
@@ -28,7 +29,15 @@ def mentionUser(user):
 class Comie(discord.Client):
     ### REACIONS
     async def on_raw_reaction_add(self, payload):
-        
+        if payload.emoji.name == configwrapper.getEntry("WATCH2GETHER_REACTION_EMOJI"):
+            channel = await self.fetch_channel(payload.channel_id)
+            message = await channel.fetch_message(payload.message_id)
+            if "https://www.youtube.com/watch?v=" in message.content:
+                roomLink = await watchtogether.getRoom(message.content)
+                msg = "%s ist euer Watch2Gether Link, viel Spaß! 🤗" % (roomLink)
+                await channel.send(msg)
+            return
+
         #The CS-Dating Channel ID so only 6 thumbs-up will start an event in the CS channel
         # toDo: rewrite for issue #47 to get closed
         if payload.channel_id == config["csgo"]["channelID"]:
@@ -181,18 +190,7 @@ class Comie(discord.Client):
             return
 
         elif command == "watch":
-            params = message.content.split(" ")
-            load = { 
-                "w2g_api_key" : configwrapper.getEntry("WATCH2GETHER_APIKEY")
-            }
-            if len(params) != 1:
-                load["share"] = params[-1]
-            r = requests.post("https://w2g.tv/rooms/create.json", load)
-            if r.status_code == 200:
-                url = "https://w2g.tv/rooms/" + r.json()["streamkey"]
-                await message.channel.send(url + " ist euer Watch2gether Raum. Viel Spaß! 🤗")
-            else:
-                print("ERROR in watch2gether api response")
+            await watchtogether.exec(self, message)
             return
 
         ##### IMGUR
