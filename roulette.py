@@ -231,7 +231,7 @@ class roulette():
         params = msg.split(" ")[1:]
         bet = int(params[-1])
         currentchips = await getplayerchips(user)
-        maxbet = configwrapper.getEntry("ROULETTE_MAXBET")
+        maxbet = int(configwrapper.getEntry("ROULETTE_MAXBET"))
         if bet > currentchips:
             await message.channel.send("Sorry %s, du kannst keine %d Chips wetten wenn du nur %d hast. 😅" % (mentionUser(user), bet, currentchips))
             return
