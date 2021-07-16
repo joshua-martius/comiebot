@@ -30,7 +30,7 @@ class dice():
     async def exec(self, message):
         params = message.content.split(" ")[1:]
         if len(params) == 0 or not all(elem.isnumeric() for elem in params[1:]):
-            await message.channel.send("Alle Parameter müssen Zahlen sein... 😑")
+            await message.channel.send("Alle Parameter müssen Zahlen sein. 😑")
             return
         
         amount = 0
