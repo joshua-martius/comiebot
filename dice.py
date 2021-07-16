@@ -47,7 +47,7 @@ class dice():
             return
 
         if maxInt > 100 or maxInt < 2:
-            await message.channel.send("Ich generiere nur Zahlen bis 2 bis 100. 😅")
+            await message.channel.send("Ich generiere nur Zahlen von 2 bis 100. 😅")
             return
 
         results = []
