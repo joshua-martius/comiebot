@@ -1,15 +1,16 @@
 from discord import utils
 import json
 import discord
+import pymysql
 
 config = json.loads(open("./config.json","r").read())
 
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
 
-class csdating():
+class dating():
     async  def datevote(self,message,start_time, end_time):
-        await message.channel.send("%s möchte heute CS:GO spielen @everyone, wann habt ihr Zeit?" % (mentionUser(message.author)))
+        await message.channel.send("%s möchte heute %s spielen @everyone, wann habt ihr Zeit?" % (mentionUser(message.author),message.channel.name))
         for i in range(start_time,end_time + 1):
             reactionMessage = await message.channel.send(str(i) + " Uhr")
             await reactionMessage.add_reaction('❌')
@@ -17,18 +18,22 @@ class csdating():
         await message.delete()
 
     async  def sendhelp(self,message):
-        msg = "*So benutzt du CSDating:*"
-        msg = msg + "\n-->: !cs Start Zeit End Zeit"
-        msg = msg + "\n-->: Beispiel: !cs 19 21" 
+        msg = "*So benutzt du Dating:*"
+        msg = msg + "\n-->: !d Start Zeit End Zeit"
+        msg = msg + "\n-->: Beispiel: !d 19 21" 
         msg = msg + "\n-->: Damit werden 3 Nachrichten mit den Zeiten 19 Uhr,20 Uhr und 21 Uhr schon mit Reactions gesendet!"
         await message.channel.send(msg)
 
     async def reaction(self,payload):
+        cmd = "SELECT gName FROM tblGame WHERE gChannelID = %s " (payload.channelid)
+        result = pymysql.executeSql(cmd)
         #Get the Full message data without the fix channel
         for channel in self.guilds[0].channels:
-            if channel.name == config["csgo"]["channelName"]:
+            if channel.name == result:
                 message = await channel.fetch_message(payload.message_id)
 
+        cmd = "SELECT gTeamsize FROM tblGame WHERE gChannelID = %s " (payload.channelid)
+        result = pymysql.executeSql(cmd)
         #iterate over the reaction
         for reaction in message.reactions:
             #Full team accepted.
@@ -36,7 +41,7 @@ class csdating():
                 if reaction.count >= 2:
                     # remove bot's own reaction from the message
                     await message.remove_reaction("✅", self.member)
-                if reaction.count == 5:
+                if reaction.count == result:
                     #Create a list of the users that reacted to the message
                     users = await reaction.users().flatten()
                     #iterate over the users
