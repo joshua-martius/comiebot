@@ -12,7 +12,7 @@ import pymysql
 import time
 import json
 from datetime import datetime
-from csdating import csdating
+from dating import dating
 from rolehandler import rolehandler
 from weebnation import weebnation
 import requests
@@ -40,11 +40,8 @@ class Comie(discord.Client):
 
         #The CS-Dating Channel ID so only 6 thumbs-up will start an event in the CS channel
         # toDo: rewrite for issue #47 to get closed
-        if payload.channel_id == config["csgo"]["channelID"]:
-            #I dont care about downvotes
-            if payload.emoji.name != "✅":
-                return
-            await csdating.reaction(self, payload)
+        if payload.emoji.name == configwrapper.getEntry("DATING_REACTION_EMOJI"):
+            await dating.reaction(self, payload)
         
         if str(payload.message_id) == configwrapper.getEntry("ROLEHANDLER_REACTIONMESSAGE"):
             await rolehandler.reactionAdded(self, payload.user_id, payload.emoji, payload.message_id)
@@ -233,13 +230,13 @@ class Comie(discord.Client):
             await self.sendHelp(message.channel, message.author)
             return
         
-        ## CSDATING
-        elif command == "cs":
+        ## DATING
+        elif command == "d":
             params = message.content.split(" ")[1:]
             if len(params) == 0 or str(params[0]) == "help" or len(params) == 1:
-                await csdating.sendhelp(self,message)
+                await dating.sendhelp(self,message)
                 return
-            await csdating.datevote(self,message,int(params[0]),int(params[1]))
+            await dating.datevote(self,message,int(params[0]),int(params[1]))
             return
 
         ##### COIN FLIP

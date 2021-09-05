@@ -2,6 +2,7 @@ from discord import utils
 import json
 import discord
 import pymysql
+from configwrapper import configwrapper
 
 config = json.loads(open("./config.json","r").read())
 
@@ -51,10 +52,10 @@ class dating():
                         #mention the teammates for user
                         for teammate in users:
                             #dont mention the bot and the user himself
-                            if teammate.name == config["discord"]["botName"] or teammate.name == user.name:
+                            if teammate.name == configwrapper.getEntry("DISCORD_BOTNAME") or teammate.name == user.name:
                                 continue
                             msg = msg +("%s \n" % (teammate.name))
                         #send Message to the user
-                        if user.name != config["discord"]["botName"]:
+                        if user.name != configwrapper.getEntry("DISCORD_BOTNAME"):
                             await user.send(msg)
         return
