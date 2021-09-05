@@ -2,8 +2,7 @@
 from discord import utils
 import random
 import json
-
-config = json.loads(open("./config.json","r").read())
+from configwrapper import configwrapper
 
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
@@ -11,7 +10,7 @@ def mentionUser(user):
 class secretsanta():
 
     async def register(self, message):
-        role = utils.get(message.guild.roles, name=config["secretsanta"]["rolename"])
+        role = utils.get(message.guild.roles, name=configwrapper.getEntry("SANTA_ROLENAME"))
         user = message.author
         try:
             if role not in user.roles:
@@ -32,14 +31,14 @@ class secretsanta():
             await message.author.send("Wichteln kann nicht aus einem privaten Chat heraus gestartet werden!")
             return
 
-        role = utils.get(message.guild.roles, name=config["secretsanta"]["rolename"])
+        role = utils.get(message.guild.roles, name=configwrapper.getEntry("SANTA_ROLENAME"))
         santas = []
         for u in users:
             if role in u.roles and not u.bot:
                 santas.append(u)
         
         if len(santas) < 3:
-            await message.channel.send("Mindestens drei Leute müssen die Rolle \"" + config["secretsanta"]["rolename"] + "\" besitzen... :/")
+            await message.channel.send("Mindestens drei Leute müssen die Rolle \"" + configwrapper.getEntry("SANTA_ROLENAME") + "\" besitzen... :/")
             return
 
         await message.channel.send("Los gehts! %s Leute nehmen Teil!" % (len(santas)))
@@ -65,6 +64,6 @@ class secretsanta():
             await message.channel.send("%s hat %s bekommen." % (mentionUser(santas[-1]), mentionUser(santas[0])))
 
         await message.channel.send("Ich habe die Teilnehmerliste %d mal durchgewürfelt :)" % (shuffles))
-        await message.channel.send("Partnervergabe abgeschlossen! Viel Spaß %ss!" % (config["secretsanta"]["rolename"]))
+        await message.channel.send("Partnervergabe abgeschlossen! Viel Spaß %ss!" % (configwrapper.getEntry("SANTA_ROLENAME")))
         return
     

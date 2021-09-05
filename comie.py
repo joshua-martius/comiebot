@@ -17,6 +17,9 @@ from rolehandler import rolehandler
 from weebnation import weebnation
 import requests
 from emojifier import emojifier
+from configwrapper import configwrapper
+from remindme import remindme
+from watchtogether import watchtogether
 
 config = json.loads(open("./config.json","r").read())
 
@@ -26,21 +29,32 @@ def mentionUser(user):
 class Comie(discord.Client):
     ### REACIONS
     async def on_raw_reaction_add(self, payload):
+        if payload.emoji.name == configwrapper.getEntry("WATCH2GETHER_REACTION_EMOJI"):
+            channel = await self.fetch_channel(payload.channel_id)
+            message = await channel.fetch_message(payload.message_id)
+            if "https://www.youtube.com/watch?v=" in message.content:
+                roomLink = await watchtogether.getRoom(message.content)
+                msg = "%s ist euer Watch2Gether Link, viel Spaß! 🤗" % (roomLink)
+                await channel.send(msg)
+            return
+
         #The CS-Dating Channel ID so only 6 thumbs-up will start an event in the CS channel
+        # toDo: rewrite for issue #47 to get closed
         if payload.channel_id == config["csgo"]["channelID"]:
             #I dont care about downvotes
             if payload.emoji.name != "✅":
                 return
             await csdating.reaction(self, payload)
-            
-        if str(payload.message_id) == config["roles"]["reactionMessage"]:
+        
+        if str(payload.message_id) == configwrapper.getEntry("ROLEHANDLER_REACTIONMESSAGE"):
             await rolehandler.reactionAdded(self, payload.user_id, payload.emoji, payload.message_id)
             return
+        
         
         if payload.emoji.name != "👍" and payload.emoji.name != "👀":
            return
           
-        if str(payload.member) == config["discord"]["botName"]:
+        if str(payload.member) == configwrapper.getEntry("DISCORD_BOTNAME"):
             return
             
         if payload.emoji.name != "👍" and payload.emoji.name != "👀":
@@ -54,7 +68,8 @@ class Comie(discord.Client):
     async def on_raw_reaction_remove(self, payload): 
         if str(payload.member) == "Comie#1396":
             return
-        if str(payload.message_id) == config["roles"]["reactionMessage"]:
+            
+        if str(payload.message_id) == configwrapper.getEntry("ROLEHANDLER_REACTIONMESSAGE"):
             await rolehandler.reactionRemoved(self, payload.user_id, payload.emoji, payload.message_id)
             return
 
@@ -68,11 +83,12 @@ class Comie(discord.Client):
 
     ### READY MESSAGE
     async def on_ready(self):
-        self.member = await self.fetch_user(config["discord"]["botID"])
+        self.member = await self.fetch_user(configwrapper.getEntry("DISCORD_BOTID"))
         print("Bot is up and running.")
         global startdate
         startdate = datetime.utcnow()
         await rolehandler.init(self)
+        await remindme.init(self)
         return
 
     async def on_member_join(self, member):
@@ -110,7 +126,7 @@ class Comie(discord.Client):
         if not message.content.startswith("!"):
             return
         
-        if str(message.guild) == "None" and str(message.author) not in config["discord"]["admins"]:
+        if str(message.guild) == "None" and str(message.author.id) not in configwrapper.getEntry("DISCORD_ADMIN"):
             await message.channel.send("Ich reagiere nicht auf Befehle im privaten Chat! 😛")
             return
 
@@ -120,7 +136,7 @@ class Comie(discord.Client):
 
         ##### SECRET SANTA
         if command == "wichteln":
-            if str(message.author) == config["secretsanta"]["organizer"]:
+            if str(message.author) == configwrapper.getEntry("SANTA_ORGANIZER"):
                 await secretsanta.exec(self, message)
             else:
                 await secretsanta.register(self, message)
@@ -137,6 +153,10 @@ class Comie(discord.Client):
 
         elif command == "say":
             await emojifier.exec(self, message)
+            return
+
+        elif command == "rm":
+            await remindme.addReminder(message)
             return
 
         #### ROULETTE
@@ -170,18 +190,7 @@ class Comie(discord.Client):
             return
 
         elif command == "watch":
-            params = message.content.split(" ")
-            load = { 
-                "w2g_api_key" : config["watchtogether"]["apikey"]
-            }
-            if len(params) != 1:
-                load["share"] = params[-1]
-            r = requests.post("https://w2g.tv/rooms/create.json", load)
-            if r.status_code == 200:
-                url = "https://w2g.tv/rooms/" + r.json()["streamkey"]
-                await message.channel.send(url + " ist euer Watch2gether Raum. Viel Spaß! 🤗")
-            else:
-                print("ERROR in watch2gether api response")
+            await watchtogether.exec(self, message)
             return
 
         ##### IMGUR
@@ -201,7 +210,7 @@ class Comie(discord.Client):
             return
 
         ##### IMGUR - RESULTS
-        elif command == "results" and str(message.author) in config["discord"]["admins"]:
+        elif command == "results" and str(message.author.id) in configwrapper.getEntry("DISCORD_ADMIN"):
             results = await imgur.postResults(self, message.channel)
             winmsg = await message.channel.fetch_message(results[0])
             winner = await self.fetch_user(results[2])
