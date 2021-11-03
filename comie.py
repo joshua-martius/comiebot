@@ -50,7 +50,7 @@ class Comie(discord.Client):
             await rolehandler.reactionAdded(self, payload.user_id, payload.emoji, payload.message_id)
             return
         
-        if str(payload.member) == configwrapper.getEntry("DISCORD_BOTNAME"):
+        if str(payload.user_id) == configwrapper.getEntry("DISCORD_BOTID"):
             return
         
         reminderSQL = "SELECT rMessageID FROM tblReminder WHERE rMessageID IS NOT NULL"

@@ -51,7 +51,11 @@ class remindme():
             result = pymysql.executeSql(cmd)
             for row in result:
                 user = await self.fetch_user(row[1])
-                message = await user.send("Es ist %s Uhr, ich erinnere dich an: %s! :)" % (datetime.strptime(row[2],"%Y-%m-%d %H:%M").strftime("%H:%M"),row[3]))
+                try:
+                    timetext = datetime.strptime(row[2],"%Y-%m-%d %H:%M:%S")
+                except:
+                    timetext = datetime.strptime(row[2],"%Y-%m-%d %H:%M")
+                message = await user.send("Es ist %s Uhr, ich erinnere dich an: %s! :)" % (timetext.strftime("%H:%M"),row[3]))
                 await message.add_reaction('🔁')
                 cmd = "UPDATE tblReminder SET rSentOut = 1, rMessageID = '%s' WHERE rID = %d" % (message.id,int(row[0]))
                 pymysql.executeSql(cmd)
