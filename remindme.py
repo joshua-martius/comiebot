@@ -2,6 +2,8 @@ import pymysql
 from datetime import datetime, timedelta
 from asyncio import sleep
 
+from configwrapper import configwrapper
+
 class remindme():
     async def addReminder(message):
         userid = message.author.id
@@ -28,6 +30,16 @@ class remindme():
         await message.channel.send("Okay, ich erinnere dich um %s an %s! :)" % (remindertime.strftime("%H:%M"), topic))
         return
 
+    async def extendReminder(self, messageID: str):
+        extensionTime = configwrapper.getEntry("REMINDER_EXTENSION_TIME")
+        cmd = "SELECT rUserID FROM tblReminder WHERE rMessageID = '%s'" % (messageID)
+        result = pymysql.executeSql(cmd)
+        user = await self.fetch_user(result[0][0])
+        cmd = "UPDATE tblReminder SET rSentOut = 0, rTime = DATE_ADD(rTime, INTERVAL %s MINUTE) WHERE rMessageID = '%s'" % (extensionTime,messageID)
+        pymysql.executeSql(cmd)
+        await user.send("Okay, ich erinnere dich in %s Minuten nochmal! :)" % (extensionTime))
+        return
+
     async def init(self):
         # wait for reminders
         print("Starting Reminder module at full minute.")
@@ -39,8 +51,9 @@ class remindme():
             result = pymysql.executeSql(cmd)
             for row in result:
                 user = await self.fetch_user(row[1])
-                await user.send("Es ist %s Uhr, ich erinnere dich an: %s! :)" % (datetime.strptime(row[2],"%Y-%m-%d %H:%M").strftime("%H:%M"),row[3]))
-                cmd = "UPDATE tblReminder SET rSentOut = 1 WHERE rID = %d" % (int(row[0]))
+                message = await user.send("Es ist %s Uhr, ich erinnere dich an: %s! :)" % (datetime.strptime(row[2],"%Y-%m-%d %H:%M").strftime("%H:%M"),row[3]))
+                await message.add_reaction('🔁')
+                cmd = "UPDATE tblReminder SET rSentOut = 1, rMessageID = '%s' WHERE rID = %d" % (message.id,int(row[0]))
                 pymysql.executeSql(cmd)
             await sleep(60)
         return

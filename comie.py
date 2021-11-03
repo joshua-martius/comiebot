@@ -50,12 +50,22 @@ class Comie(discord.Client):
             await rolehandler.reactionAdded(self, payload.user_id, payload.emoji, payload.message_id)
             return
         
+        if str(payload.member) == configwrapper.getEntry("DISCORD_BOTNAME"):
+            return
+        
+        reminderSQL = "SELECT rMessageID FROM tblReminder WHERE rMessageID IS NOT NULL"
+        reminders = pymysql.executeSql(reminderSQL, True)
+        realReminders = []
+        for rem in reminders:
+            realReminders.append(rem[0])
+
+        if str(payload.message_id) in realReminders:
+            await remindme.extendReminder(self,str(payload.message_id))
+            return
         
         if payload.emoji.name != "👍" and payload.emoji.name != "👀":
            return
           
-        if str(payload.member) == configwrapper.getEntry("DISCORD_BOTNAME"):
-            return
             
         if payload.emoji.name != "👍" and payload.emoji.name != "👀":
             return
