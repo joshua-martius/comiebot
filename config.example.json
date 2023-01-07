@@ -1,0 +1,24 @@
+{
+    "discord": {
+        "botName": "bot#1337"
+    },
+    "csgo": {
+         "teamSize": 5,
+          "channelName": "csgo",
+          "channelID": 804047115164712990
+    },
+    "db": {
+        "host": "",
+        "user": "",
+        "password": "",
+        "name": ""
+    },
+    "roles":
+    {
+        "reactionMessage": "814176098673229875",
+        "list": {
+                "csgo": "<:CSGO:816037482453532725>",
+                "weeb": "<:weeb:816973774507081729>"
+        }
+    }
+}

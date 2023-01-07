@@ -3,6 +3,8 @@ import json
 import discord
 
 config = json.loads(open("./config.json","r").read())
+processedMessages = {}
+
 
 def mentionUser(user):
     return "<@" + str(user.id) + ">"
@@ -15,6 +17,7 @@ class csdating():
             await reactionMessage.add_reaction('❌')
             await reactionMessage.add_reaction('✅')
         await message.delete()
+        processedMessages[message.id] = False
 
     async  def sendhelp(self,message):
         msg = "*So benutzt du CSDating:*"
@@ -29,27 +32,37 @@ class csdating():
             if channel.name == config["csgo"]["channelName"]:
                 message = await channel.fetch_message(payload.message_id)
 
-        #iterate over the reaction
+        # check if the message has already been processed
+        if processedMessages[message.id] == True:
+            return
+
+        # iterate over the reaction
         for reaction in message.reactions:
-            #Full team accepted.
-            if reaction.emoji == "✅": 
-                if reaction.count >= 2:
-                    # remove bot's own reaction from the message
-                    await message.remove_reaction("✅", self.member)
-                if reaction.count == 5:
-                    #Create a list of the users that reacted to the message
-                    users = await reaction.users().flatten()
-                    #iterate over the users
-                    for user in users:
-                        msg = ("Hi **%s!**\n" % mentionUser(user))
-                        msg = msg +("Du hast ein Date um **%s** mit:\n" % (message.content))
-                        #mention the teammates for user
-                        for teammate in users:
-                            #dont mention the bot and the user himself
-                            if teammate.name == config["discord"]["botName"] or teammate.name == user.name:
-                                continue
-                            msg = msg +("%s \n" % (teammate.name))
-                        #send Message to the user
-                        if user.name != config["discord"]["botName"]:
-                            await user.send(msg)
+            # Full team accepted.
+            if reaction.emoji != "✅":
+                continue
+
+            if reaction.count < 2:
+                # remove bot's own reaction from the message
+                await message.remove_reaction("✅", self.member)
+
+            if reaction.count == 5:
+                #Create a list of the users that reacted to the message
+                users = await reaction.users().flatten()
+
+                #iterate over the users
+                for user in users:
+                    msg = ("Hi **%s!**\n" % mentionUser(user))
+                    msg = msg +("Du hast ein Date um **%s** mit:\n" % (message.content))
+                    #mention the teammates for user
+                    for teammate in users:
+                        #dont mention the bot and the user himself
+                        if teammate.name == config["discord"]["botName"] or teammate.name == user.name:
+                            continue
+                        msg = msg +("%s \n" % (teammate.name))
+                    #send Message to the user
+                    if user.name != config["discord"]["botName"]:
+                        await user.send(msg)
+
+                processedMessages[message.id] = True
         return
