@@ -11,7 +11,16 @@ def mentionUser(user):
 
 class csdating():
     async  def datevote(self,message,start_time, end_time):
-        await message.channel.send("%s möchte heute CS:GO spielen @everyone, wann habt ihr Zeit?" % (mentionUser(message.author)))
+        if start_time > end_time or start_time < 1 or end_time > 24:
+            await message.channel.send("Bitte gib eine gültige Zeit an! 🥲")
+            return
+
+        if abs(start_time - end_time) > 4:
+            await message.channel.send("Der Zeitrahmen darf nicht größer als 4 Stunden sein! 🥹")
+            return
+        
+        # time frame is valid, going on...
+        await message.channel.send("%s möchte heute CS:GO spielen @everyone, wann habt ihr Zeit? 🔥🔥🔥" % (mentionUser(message.author)))
         for i in range(start_time,end_time + 1):
             reactionMessage = await message.channel.send(str(i) + " Uhr")
             await reactionMessage.add_reaction('❌')
