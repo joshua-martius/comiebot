@@ -61,7 +61,7 @@ class csdating():
 
             if reaction.count == 5:
                 #Create a list of the users that reacted to the message
-                users = await reaction.users().flatten()
+                users = [user async for user in reaction.users()]
 
                 #iterate over the users
                 for user in users:
