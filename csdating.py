@@ -55,7 +55,7 @@ class csdating():
             if reaction.emoji != "✅":
                 continue
 
-            if reaction.count < 2:
+            if reaction.count == 2:
                 # remove bot's own reaction from the message
                 await message.remove_reaction("✅", self.member)
 
