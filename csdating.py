@@ -42,8 +42,12 @@ class csdating():
                 message = await channel.fetch_message(payload.message_id)
 
         # check if the message has already been processed
-        if processedMessages[message.id] == True:
-            return
+        try:
+            if processedMessages[message.id] == True:
+                return
+        except:
+            # message has not been processed yet, do nothing
+            pass
 
         # iterate over the reaction
         for reaction in message.reactions:
